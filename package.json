@@ -1,0 +1,12 @@
+{
+  "name": "flexshot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ONE BULLET / FlexShot — 2D puzzle-action with one bullet and endless generated levels",
+  "scripts": {
+    "test": "node tests/run-all.js",
+    "test:generator": "node tests/test-generator.js",
+    "test:ui": "node tests/test-ui.js",
+    "test:gameplay": "node tests/test-gameplay.js"
+  }
+}

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0B0D12">
+  <meta name="description" content="ONE BULLET / FlexShot — неоновая головоломка-экшен с одной пулей, рикошетами и бесконечными уровнями.">
+  <title>ONE BULLET — FlexShot</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230B0D12%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%279%27 fill=%27%23fff%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2716%27 fill=%27none%27 stroke=%27%23FF6B35%27 stroke-width=%273%27/%3E%3C/svg%3E">
+
+  <!--
+    Яндекс Игры SDK.
+    Для публикационной сборки раскомментируйте строку ниже.
+    В архиве на сервере Яндекса путь должен быть "/sdk.js",
+    на своём домене — "https://sdk.games.s3.yandex.net/sdk.js".
+    Локально (Live Server) SDK не подключён — игра работает без него.
+
+    <script src="/sdk.js"></script>
+  -->
+</head>
+<body>
+  <noscript><div style="padding:24px;font-family:sans-serif;color:#E8EDF7">Для игры нужен JavaScript.</div></noscript>
+
+  <div id="app">
+    <div id="stage">
+      <canvas id="game" width="1280" height="720" aria-label="Игровое поле ONE BULLET"></canvas>
+
+      <!-- ================= HUD ================= -->
+      <div id="hud" class="hidden">
+        <div class="hud-group">
+          <div class="hud-chip" id="hudLevel">LEVEL 1</div>
+          <div class="hud-chip" id="hudBounces" title="Осталось рикошетов">↺ <span id="hudBouncesVal">5</span></div>
+        </div>
+
+        <div class="hud-energy" id="hudEnergy">
+          <div class="hud-energy-top">
+            <span data-i18n="hud.energy">ЭНЕРГИЯ</span>
+            <span id="hudEnergyVal">100</span>
+          </div>
+          <div class="hud-energy-track"><div id="hudEnergyFill"></div></div>
+        </div>
+
+        <div class="hud-group right">
+          <div class="hud-chip danger" id="hudEnemies">◎ <span id="hudEnemiesVal">1</span></div>
+          <button id="btnFire" class="fire-btn" data-i18n="hud.fire">FIRE</button>
+          <button id="btnPause" class="icon-btn" aria-label="Пауза">❚❚</button>
+        </div>
+      </div>
+
+      <div id="hint" class="hidden"><span id="hintText"></span></div>
+      <div id="toasts"></div>
+
+      <!-- ================= Экранные кнопки (мобильные) ================= -->
+      <div id="touch" class="hidden">
+        <div class="touch-pad">
+          <button class="touch-btn" data-hold="left" aria-label="Повернуть влево">◀</button>
+          <button class="touch-btn" data-hold="right" aria-label="Повернуть вправо">▶</button>
+        </div>
+        <div class="touch-pad">
+          <button class="touch-btn" data-hold="slow" aria-label="Замедлить">▼</button>
+          <button class="touch-btn" data-hold="fast" aria-label="Ускорить">▲</button>
+        </div>
+        <div class="touch-pad">
+          <button class="touch-btn touch-fire" id="btnFireTouch" aria-label="Выстрел">FIRE</button>
+        </div>
+      </div>
+
+      <div id="screens">
+
+        <!-- Меню -->
+        <section id="screen-menu" class="screen active">
+          <div class="menu-wrap">
+            <div class="logo">
+              <div class="logo-mark"><span></span></div>
+              <h1>ONE<span>BULLET</span></h1>
+              <p class="tagline" data-i18n="menu.tagline">Одна пуля. Бесконечные рикошеты.</p>
+            </div>
+
+            <div class="menu-buttons">
+              <button id="btnPlay" class="btn primary" data-i18n="menu.play">ИГРАТЬ</button>
+              <div class="menu-row">
+                <button id="btnLevels" class="btn" data-i18n="menu.levels">УРОВНИ</button>
+                <button id="btnDaily" class="btn" data-i18n="menu.daily">ИСПЫТАНИЕ</button>
+              </div>
+              <div class="menu-row">
+                <button id="btnRecords" class="btn ghost" data-i18n="menu.records">РЕКОРДЫ</button>
+                <button id="btnSettings" class="btn ghost" data-i18n="menu.settings">НАСТРОЙКИ</button>
+              </div>
+            </div>
+
+            <div class="menu-foot">
+              <div id="menuStats" class="menu-stats"></div>
+              <div class="menu-note" data-i18n="menu.note">Прогресс сохраняется в браузере</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Выбор уровня -->
+        <section id="screen-levels" class="screen">
+          <header class="screen-header">
+            <button class="icon-btn back" id="btnLevelsBack" aria-label="Назад">←</button>
+            <h2 data-i18n="levels.title">УРОВНИ</h2>
+            <div class="header-spacer"></div>
+          </header>
+          <div class="levels-body">
+            <div id="levelGrid" class="level-grid"></div>
+            <div class="levels-pager">
+              <button class="btn small" id="btnLevelsPrev">←</button>
+              <span id="levelsPageLabel">1 / 1</span>
+              <button class="btn small" id="btnLevelsNext">→</button>
+            </div>
+            <p class="muted center small" data-i18n="levels.more">Новые арены генерируются бесконечно.</p>
+          </div>
+        </section>
+
+        <!-- Ежедневное испытание -->
+        <section id="screen-daily" class="screen">
+          <header class="screen-header">
+            <button class="icon-btn back" id="btnDailyBack" aria-label="Назад">←</button>
+            <h2 data-i18n="daily.title">ИСПЫТАНИЕ ДНЯ</h2>
+            <div class="header-spacer"></div>
+          </header>
+          <div class="panel">
+            <div class="daily-card">
+              <div class="daily-date" id="dailyDate">—</div>
+              <div class="daily-level" id="dailyLevel">ARENA —</div>
+              <div class="daily-timer">
+                <span data-i18n="daily.next">До нового испытания</span>
+                <strong id="dailyCountdown">00:00:00</strong>
+              </div>
+            </div>
+            <div class="stats-grid" id="dailyStats"></div>
+            <p class="muted small" data-i18n="daily.note">Одно и то же испытание для всех игроков. Сложность зависит от даты.</p>
+            <button id="btnDailyPlay" class="btn primary" data-i18n="daily.play">ИГРАТЬ ИСПЫТАНИЕ</button>
+          </div>
+        </section>
+
+        <!-- Рекорды и достижения -->
+        <section id="screen-records" class="screen">
+          <header class="screen-header">
+            <button class="icon-btn back" id="btnRecordsBack" aria-label="Назад">←</button>
+            <h2 data-i18n="records.title">РЕКОРДЫ</h2>
+            <div class="header-spacer"></div>
+          </header>
+          <div class="panel scroll">
+            <div class="stats-grid" id="recordsStats"></div>
+            <h3 data-i18n="records.achievements">ДОСТИЖЕНИЯ</h3>
+            <div id="achievementsList" class="ach-list"></div>
+          </div>
+        </section>
+
+        <!-- Настройки -->
+        <section id="screen-settings" class="screen">
+          <header class="screen-header">
+            <button class="icon-btn back" id="btnSettingsBack" aria-label="Назад">←</button>
+            <h2 data-i18n="settings.title">НАСТРОЙКИ</h2>
+            <div class="header-spacer"></div>
+          </header>
+          <div class="panel">
+            <label class="setting-row">
+              <span data-i18n="settings.sound">Звук</span>
+              <input type="checkbox" id="toggleSound" class="switch">
+            </label>
+            <label class="setting-row">
+              <span data-i18n="settings.volume">Громкость</span>
+              <input type="range" id="rangeVolume" min="0" max="100" step="1">
+            </label>
+            <label class="setting-row">
+              <span data-i18n="settings.fx">Меньше эффектов</span>
+              <input type="checkbox" id="toggleFx" class="switch">
+            </label>
+            <div class="setting-row">
+              <span data-i18n="settings.lang">Язык</span>
+              <div class="lang-buttons">
+                <button class="btn tiny" id="btnLangRu">RU</button>
+                <button class="btn tiny" id="btnLangEn">EN</button>
+              </div>
+            </div>
+            <button class="btn danger" id="btnReset" data-i18n="settings.reset">СБРОСИТЬ ПРОГРЕСС</button>
+            <p class="muted small" data-i18n="settings.resetNote">Сброс удалит открытые уровни, рекорды и достижения.</p>
+          </div>
+        </section>
+
+        <!-- Пауза -->
+        <section id="screen-pause" class="screen modal">
+          <div class="modal-card">
+            <h2 data-i18n="pause.title">ПАУЗА</h2>
+            <button id="btnResume" class="btn primary" data-i18n="pause.resume">ПРОДОЛЖИТЬ</button>
+            <button id="btnRestart" class="btn" data-i18n="pause.restart">ЗАНОВО</button>
+            <button id="btnPauseSettings" class="btn ghost" data-i18n="menu.settings">НАСТРОЙКИ</button>
+            <button id="btnPauseMenu" class="btn ghost" data-i18n="pause.menu">В МЕНЮ</button>
+          </div>
+        </section>
+
+        <!-- Результат -->
+        <section id="screen-result" class="screen modal">
+          <div class="modal-card">
+            <div id="resultBadge" class="result-badge">✓</div>
+            <h2 id="resultTitle">УРОВЕНЬ ПРОЙДЕН</h2>
+            <p id="resultSub" class="muted"></p>
+            <div id="resultStats" class="stats-grid compact"></div>
+            <button id="btnNext" class="btn primary" data-i18n="result.next">СЛЕДУЮЩИЙ УРОВЕНЬ</button>
+            <button id="btnRetry" class="btn" data-i18n="result.retry">ЕЩЁ РАЗ</button>
+            <button id="btnResultMenu" class="btn ghost" data-i18n="pause.menu">В МЕНЮ</button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/engine.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/yandex.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
