@@ -40,4 +40,5 @@ for (const s of seeds) {
 }
 
 console.log('\nSummary: fails=' + fails + ' of ' + levels.length * seeds.length + ', total ' + totalMs + 'ms');
+console.log(fails ? 'GENERATOR TEST FAILED' : 'GENERATOR TEST OK');
 process.exit(fails ? 1 : 0);

@@ -98,6 +98,7 @@
       'hint.patrol': 'Враги двигаются. Цельтесь с упреждением.',
       'hint.energy': 'Энергия управления ограничена. Планируйте выстрел заранее.',
       'hint.ricochets': 'Число рикошетов ограничено — следите за счётчиком.',
+      'ui.rotate': 'Поверните устройство горизонтально',
       'ach.unlocked': 'ДОСТИЖЕНИЕ: {name}'
     },
     en: {
@@ -174,6 +175,7 @@
       'hint.patrol': 'Enemies move. Lead your shot.',
       'hint.energy': 'Steering energy is limited. Plan the shot.',
       'hint.ricochets': 'Ricochets are limited — watch the counter.',
+      'ui.rotate': 'Rotate your device to landscape',
       'ach.unlocked': 'ACHIEVEMENT: {name}'
     }
   };
@@ -550,7 +552,9 @@
     result: null,
     timers: [],
     prefetched: {},
-    settingsFrom: 'menu'
+    settingsFrom: 'menu',
+    adBusy: false,
+    levelsSinceAd: 0
   };
 
   function clearTimers() {
@@ -639,7 +643,6 @@
     Game.fx.particles.length = 0;
     Game.fx.rings.length = 0;
     Game.fx.shake = 0;
-    Game.fx.flash = 0;
     Game.fx.slow = 0;
     Game.fx.flash = 0.3;
     Game.fx.flashColor = COLORS.mech;
@@ -853,11 +856,24 @@
   // Переход к следующему уровню.
   // Реклама (если SDK подключён) — только здесь, между уровнями.
   function nextLevel() {
+    if (Game.adBusy) return;
     if (!Game.session || Game.session.daily) { goMenu(); return; }
+
     const next = Game.levelIndex + 1;
     Audio.sfx('click');
-    if (Yandex && Yandex.canShowAd()) {
-      Yandex.interstitial().then(function () { startLevel(next, {}); });
+
+    // Реклама — не чаще, чем раз в 3 перехода и не раньше 3-го уровня.
+    // Плюс собственный интервал в yandex.js (90 секунд).
+    Game.levelsSinceAd = (Game.levelsSinceAd || 0) + 1;
+    const adAllowed = Game.levelsSinceAd >= 3 && Game.levelIndex >= 2;
+
+    if (adAllowed && Yandex && Yandex.canShowAd()) {
+      Game.adBusy = true;
+      Game.levelsSinceAd = 0;
+      Yandex.interstitial().then(function () {
+        Game.adBusy = false;
+        startLevel(next, {});
+      });
     } else {
       startLevel(next, {});
     }
@@ -1570,7 +1586,7 @@
       }
       ctx.shadowBlur = 0;
       ctx.fillStyle = 'rgba(255,255,255,0.75)';
-      ctx.font = '700 11px Segoe UI, sans-serif';
+      ctx.font = '700 11px "Segoe UI", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(isA ? 'A' : 'B', 0, 0);
@@ -2085,6 +2101,8 @@
   // =========================================================
   function mergeCloud(remote) {
     if (!remote || typeof remote !== 'object') return;
+    // Не подменяем сохранение посреди забега
+    if (Game.mode === 'playing' || Game.mode === 'paused') { persist(true); return; }
 
     const localCleared = save.maxCleared;
     const remoteCleared = typeof remote.maxCleared === 'number' ? remote.maxCleared : -1;

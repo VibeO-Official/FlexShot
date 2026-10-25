@@ -157,10 +157,15 @@
         function finish(shown) {
           if (done) return;
           done = true;
+          clearTimeout(safety);
           Yandex.adOpen = false;
           if (Yandex.onAdStateChange) Yandex.onAdStateChange(false);
           resolve(shown);
         }
+
+        // Страховка: если платформа не вызвала ни onClose, ни onError,
+        // игра всё равно должна продолжиться.
+        const safety = setTimeout(function () { finish(false); }, 15000);
 
         try {
           Yandex.sdk.adv.showFullscreenAdv({
