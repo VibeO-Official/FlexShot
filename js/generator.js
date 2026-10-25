@@ -46,7 +46,7 @@
   // =========================================================
   function difficulty(index) {
     const i = index;
-    const bounceTarget = i < 4 ? 0
+    const bounceTarget = i === 0 ? 0
       : i < 8 ? 1
       : i < 16 ? 2
       : i < 31 ? 3
@@ -895,6 +895,7 @@
     const tol = (tolDeg != null ? tolDeg : 0.5) * Math.PI / 180;
     const angles = [level.aim, level.aim + tol, level.aim - tol];
 
+    let solutionBounces = 0;
     for (let i = 0; i < angles.length; i++) {
       const res = OB.simulate(level, angles[i], { maxTime: 30 });
       if (!res.win) {
@@ -903,6 +904,14 @@
         }
         return false;
       }
+      if (i === 0) solutionBounces = res.bounces;
+    }
+
+    // Уровень должен требовать заявленное число отскоков,
+    // иначе сложность «схлопывается» в прямой выстрел.
+    if (level.targetBounces && solutionBounces < level.targetBounces) {
+      if (!quiet) level.lastVerifyFail = 'too-few-bounces ' + solutionBounces + '/' + level.targetBounces;
+      return false;
     }
 
     // ---- структурные проверки ----
