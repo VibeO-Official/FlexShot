@@ -94,6 +94,7 @@
       'hint.block': 'Тёмные блоки с красной штриховкой поглощают пулю.',
       'hint.glass': 'Стекло ломается от попадания, и пуля летит дальше.',
       'hint.portal': 'Телепорт выбрасывает пулю с другой стороны, сохраняя направление.',
+      'hint.well': 'Фиолетовые колодцы закручивают пулю. Держитесь от них подальше.',
       'hint.patrol': 'Враги двигаются. Цельтесь с упреждением.',
       'hint.energy': 'Энергия управления ограничена. Планируйте выстрел заранее.',
       'hint.ricochets': 'Число рикошетов ограничено — следите за счётчиком.',
@@ -169,6 +170,7 @@
       'hint.block': 'Dark blocks with red hatching absorb the bullet.',
       'hint.glass': 'Glass shatters on impact and the bullet keeps flying.',
       'hint.portal': 'A portal teleports the bullet, keeping its direction.',
+      'hint.well': 'Purple wells bend the bullet. Keep your path away from them.',
       'hint.patrol': 'Enemies move. Lead your shot.',
       'hint.energy': 'Steering energy is limited. Plan the shot.',
       'hint.ricochets': 'Ricochets are limited — watch the counter.',
@@ -679,8 +681,9 @@
     if (mech.indexOf('door') !== -1) tips.push('hint.switch');
     if (mech.indexOf('glass') !== -1) tips.push('hint.glass');
     if (mech.indexOf('portal') !== -1) tips.push('hint.portal');
+    if (mech.indexOf('well') !== -1) tips.push('hint.well');
     if (mech.indexOf('patrol') !== -1 || mech.indexOf('orbit') !== -1) tips.push('hint.patrol');
-    if (lvl.index >= 15 && lvl.energyMax < 100) tips.push('hint.energy');
+    if (lvl.index >= 15 && lvl.energyMax < 500) tips.push('hint.energy');
     if (lvl.maxBounces <= 4) tips.push('hint.ricochets');
 
     for (let i = 0; i < tips.length; i++) {
@@ -1446,6 +1449,48 @@
     }
   }
 
+  function drawWells(timeSec) {
+    const lvl = Game.level;
+    if (!lvl || !lvl.wells || !lvl.wells.length) return;
+    for (let i = 0; i < lvl.wells.length; i++) {
+      const w = lvl.wells[i];
+      ctx.save();
+      ctx.translate(w.x, w.y);
+
+      const grad = ctx.createRadialGradient(0, 0, w.r * 0.15, 0, 0, w.r);
+      grad.addColorStop(0, 'rgba(185,140,255,0.16)');
+      grad.addColorStop(1, 'rgba(185,140,255,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, w.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(185,140,255,0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 9]);
+      ctx.beginPath();
+      ctx.arc(0, 0, w.r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // вращающиеся дуги показывают направление закрутки
+      ctx.strokeStyle = 'rgba(185,140,255,0.8)';
+      ctx.lineWidth = 2;
+      for (let k = 0; k < 3; k++) {
+        const a0 = w.dir * timeSec * 0.9 + (k / 3) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, w.r * 0.62, a0, a0 + 0.8);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = 'rgba(185,140,255,0.9)';
+      ctx.beginPath();
+      ctx.arc(0, 0, 2.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
   function drawSwitches() {
     const lvl = Game.level, st = Game.state;
     if (!lvl) return;
@@ -1767,6 +1812,7 @@
     ctx.drawImage(bgCanvas, 0, 0, W, H);
     if (Game.level) {
       drawWalls();
+      drawWells(timeSec);
       drawSwitches();
       drawPortals(timeSec);
       drawEnemies(timeSec);

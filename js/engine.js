@@ -228,6 +228,8 @@
     }
     if (steering) st.timeScale = CFG.steerSlowMo;
 
+    applyWells(st, dt);
+
     // ----- движение -----
     const dist = b.speed * dt;
     b.x += Math.cos(b.angle) * dist;
@@ -264,6 +266,24 @@
     st.failReason = reason;
     st.bullet.flying = false;
     emit(st, 'fail', { reason: reason, x: st.bullet.x, y: st.bullet.y });
+  }
+
+  // =========================================================
+  // Гравитационные колодцы (появляются на поздних уровнях).
+  // Детерминированно закручивают пулю, пока она внутри радиуса.
+  // =========================================================
+  function applyWells(st, dt) {
+    const wells = st.level.wells;
+    if (!wells || !wells.length) return;
+    const b = st.bullet;
+    for (let i = 0; i < wells.length; i++) {
+      const w = wells[i];
+      const dx = b.x - w.x, dy = b.y - w.y;
+      const d = Math.hypot(dx, dy);
+      if (d > w.r || d < 1) continue;
+      const falloff = 1 - d / w.r;
+      b.angle += (w.dir || 1) * (w.bend || 1.4) * falloff * dt;
+    }
   }
 
   // =========================================================
@@ -507,7 +527,7 @@
     SWITCH_R: SWITCH_R, PORTAL_R: PORTAL_R, BASE_SPEED: BASE_SPEED, CFG: CFG,
     WALL_TYPES: WALL_TYPES, ENEMY_MOVES: ENEMY_MOVES,
     registerWallType: registerWallType, registerEnemyMove: registerEnemyMove,
-    createState: createState, fire: fire, step: step, updateFx: updateFx,
+    createState: createState, fire: fire, step: step, updateFx: updateFx, applyWells: applyWells,
     trace: trace, simulate: simulate, fail: fail,
     wallRect: wallRect, sweptRect: sweptRect, enemyPos: enemyPos,
     enemyMoveRadius: enemyMoveRadius, pointToRect: pointToRect,

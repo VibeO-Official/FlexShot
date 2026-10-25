@@ -4,7 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-function boot() {
+function boot(opts) {
+  opts = opts || {};
   function ClassList() {
     const set = new Set();
     this.add = c => set.add(c);
@@ -115,7 +116,7 @@ function boot() {
     vnow = Math.max(vnow, end);
   }
 
-  const store = {};
+  const store = opts.storage || {};
   const localStorageStub = {
     getItem: k => (k in store ? store[k] : null),
     setItem: (k, v) => { store[k] = String(v); },
@@ -205,6 +206,7 @@ function boot() {
 
   return {
     win: windowStub,
+    store,
     context, elements, element: getEl, dispatch, key, tick,
     flushTimers: flush, worldToClient, localStorage: localStorageStub,
     W: 1280, H: 720

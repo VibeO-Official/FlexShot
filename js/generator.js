@@ -54,9 +54,9 @@
       : i < 101 ? 5
       : Math.min(7, 5 + Math.floor((i - 100) / 60));
 
-    const energyMax = i < 8 ? 999
-      : i < 16 ? 100
-      : Math.max(26, 100 - Math.floor((i - 16) * 0.55));
+    const energyMax = i < 15 ? 999
+      : i < 31 ? 100
+      : Math.max(26, 100 - Math.floor((i - 31) * 0.7));
 
     const maxEnemies = i < 3 ? 1
       : i < 6 ? 2
@@ -83,6 +83,7 @@
       blocks: i >= 4,
       useGlass: i >= 31,
       usePortals: i >= 31,
+      useWells: i >= 50,
       useDoors: i >= 8,
       orbitEnemies: i >= 20,
       enemyRadius: i < 21 ? 18 : i < 61 ? 16 : 15,
@@ -701,6 +702,40 @@
     return added;
   }
 
+  // Гравитационные колодцы: ставятся в стороне от решения, но
+  // усложняют чтение арены и наказывают за неточный прицел.
+  function addWells(draft, rng, path, count) {
+    let added = 0;
+    for (let a = 0; a < 140 && added < count; a++) {
+      const r = rnd(rng, 62, 104);
+      const x = rnd(rng, ARENA.x + r + 20, ARENA.x + ARENA.w - r - 20);
+      const y = rnd(rng, ARENA.y + r + 20, ARENA.y + ARENA.h - r - 20);
+
+      if (clearance(x, y, draft.walls) < r + 26) continue;
+      if (Math.hypot(x - draft.player.x, y - draft.player.y) < r + 120) continue;
+      if (pathTooClose({ x: x - r, y: y - r, w: r * 2, h: r * 2 }, path, 30)) continue;
+
+      let bad = false;
+      for (let i = 0; i < draft.enemies.length && !bad; i++) {
+        if (Math.hypot(x - draft.enemies[i].x, y - draft.enemies[i].y) < r + 70) bad = true;
+      }
+      for (let i = 0; i < draft.switches.length && !bad; i++) {
+        if (Math.hypot(x - draft.switches[i].x, y - draft.switches[i].y) < r + 50) bad = true;
+      }
+      for (let i = 0; i < draft.portals.length && !bad; i++) {
+        if (Math.hypot(x - draft.portals[i].x, y - draft.portals[i].y) < r + 60) bad = true;
+      }
+      if (bad) continue;
+
+      draft.wells.push({
+        id: 'well' + added, x: x, y: y, r: r,
+        bend: rnd(rng, 1.1, 1.8), dir: rng() < 0.5 ? 1 : -1
+      });
+      added++;
+    }
+    return added;
+  }
+
   function cxOf(r) { return r.x + r.w / 2; }
   function cyOf(r) { return r.y + r.h / 2; }
 
@@ -753,7 +788,7 @@
 
     const draft = {
       walls: walls, player: player,
-      enemies: [], switches: [], doors: [], portals: [],
+      enemies: [], switches: [], doors: [], portals: [], wells: [],
       aim: 0, maxBounces: 99, maxTime: 24
     };
 
@@ -810,6 +845,7 @@
 
     // 6) Декоративные ловушки (не на пути решения)
     addDecoys(draft, rng, path, diff.decoys, diff);
+    if (diff.useWells) addWells(draft, rng, path, 2);
 
     // 7) Итоговый уровень
     const mechanics = [];
@@ -820,6 +856,7 @@
     if (walls.some(function (w) { return w.type === 'glass'; })) mechanics.push('glass');
     if (doorInfo) mechanics.push('door');
     if (draft.portals.length) mechanics.push('portal');
+    if (draft.wells.length) mechanics.push('well');
     if (enemies.some(function (e) { return e.move.type === 'patrol'; })) mechanics.push('patrol');
     if (enemies.some(function (e) { return e.move.type === 'orbit'; })) mechanics.push('orbit');
 
@@ -833,6 +870,7 @@
       switches: draft.switches,
       doors: draft.doors,
       portals: draft.portals,
+      wells: draft.wells,
       player: player,
       aim: sol.angle,
       targetBounces: target,

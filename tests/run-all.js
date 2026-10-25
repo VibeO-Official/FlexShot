@@ -4,7 +4,9 @@ const path = require('path');
 
 const tests = [
   'test-generator.js',
+  'test-content.js',
   'test-gameplay.js',
+  'test-save.js',
   'test-ui.js'
 ];
 
