@@ -15,8 +15,14 @@
     (typeof process !== 'undefined' && process.env && process.env.GEN_DEBUG));
   const log = DEBUG ? function () { console.log.apply(console, ['[gen]'].concat([].slice.call(arguments))); } : function () {};
   const OB = global.OB || (typeof require === 'function' ? require('./engine.js') : null);
+  const Biomes = global.Biomes || (typeof require === 'function' ? require('./biomes.js') : null);
 
   const W = OB.W, H = OB.H, B = OB.BORDER;
+
+  // Биом уровня (только оформление, но детерминирован от seed).
+  function biomeOf(index, seed) {
+    return (Biomes && Biomes.forLevel) ? Biomes.forLevel(index, seed).id : 'plains';
+  }
 
   // =========================================================
   // Детерминированный ГПСЧ (mulberry32) + хеш строки в seed
@@ -947,6 +953,7 @@
     const level = {
       index: index, seed: seed + ':fallback', name: 'ARENA ' + (index + 1),
       tier: diff.tier,
+      biome: biomeOf(index, seed),
       walls: walls,
       enemies: [{ x: 1040, y: 500, r: 18, move: { type: 'static' } }],
       switches: [], doors: [], portals: [],
@@ -967,7 +974,7 @@
     // самый простой вариант — точно проходим
     const l2 = {
       index: index, seed: seed + ':simple', name: 'ARENA ' + (index + 1),
-      tier: 1, walls: borders(), enemies: [{ x: 860, y: 360, r: 20, move: { type: 'static' } }],
+      tier: 1, biome: biomeOf(index, seed), walls: borders(), enemies: [{ x: 860, y: 360, r: 20, move: { type: 'static' } }],
       switches: [], doors: [], portals: [],
       player: { x: 240, y: 360, r: 17 }, aim: 0,
       targetBounces: 0, maxBounces: 4, maxTime: 14, maxDistance: 3400,
@@ -986,6 +993,9 @@
     opts = opts || {};
     const worldSeed = opts.worldSeed || 'flexshot';
     const baseSeed = opts.seed || ('w' + worldSeed + '#' + index);
+    // Биом одинаков для всех игроков в ежедневном испытании (seed из даты)
+    // и детерминирован для обычных уровней (worldSeed + номер).
+    const biomeSeed = opts.seed || worldSeed;
     const key = baseSeed;
     if (cache[key]) return cache[key];
 
@@ -1007,6 +1017,7 @@
       if (ok) {
         lvl.generateAttempts = attempt;
         lvl.verified = true;
+        lvl.biome = biomeOf(index, biomeSeed);
         lvl.genMs = Math.round(now() - t0);
         cache[key] = lvl;
         return lvl;
@@ -1015,6 +1026,7 @@
       if (now() - t0 > 1500) break; // не подвешиваем игру
     }
     const fb = fallback(index, baseSeed);
+    fb.biome = biomeOf(index, biomeSeed);
     fb.generateAttempts = 0;
     fb.verified = true;
     fb.genMs = Math.round(now() - t0);

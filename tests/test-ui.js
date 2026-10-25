@@ -16,6 +16,14 @@ function step(name, fn) {
   }
 }
 
+// Пуля может завершить уровень за время тиков — возвращаем игру в бой
+function ensurePlaying() {
+  if (el('screen-result').classList.contains('active')) {
+    el('btnRetry').click();
+    H.tick(2);
+  }
+}
+
 step('меню активно', () => {
   check('экран меню', el('screen-menu').classList.contains('active'));
   check('статистика меню', !!el('menuStats').textContent, el('menuStats').textContent);
@@ -27,6 +35,13 @@ step('PLAY', () => {
   el('btnPlay').click();
   check('HUD показан', !el('hud').classList.contains('hidden'));
   check('меню скрыто', !el('screen-menu').classList.contains('active'));
+  const game = H.win.FlexShot.game;
+  check('биом в HUD', !!el('hudBiomeName').textContent, el('hudBiomeName').textContent);
+  check('биом уровня определён', !!game.biome, game.biome && game.biome.id);
+  check('пол уровня построен', !!game.floor && game.floor.width === 1280);
+  check('биом совпадает с уровнем',
+    game.biome.id === H.win.Biomes.forLevel(0, H.win.FlexShot.getSave().worldSeed).id,
+    game.biome.id);
 });
 
 step('отрисовка', () => H.tick(5));
@@ -38,6 +53,7 @@ step('FIRE', () => {
 });
 
 step('пауза', () => {
+  ensurePlaying();
   el('btnPause').click();
   check('экран паузы', el('screen-pause').classList.contains('active'));
   el('btnResume').click();
@@ -45,6 +61,7 @@ step('пауза', () => {
 });
 
 step('рестарт', () => {
+  ensurePlaying();
   el('btnPause').click();
   el('btnRestart').click();
   H.tick(3);
@@ -52,11 +69,13 @@ step('рестарт', () => {
 });
 
 step('уровни', () => {
+  ensurePlaying();
   el('btnPause').click();
   el('btnPauseMenu').click();
   el('btnLevels').click();
   check('экран уровней', el('screen-levels').classList.contains('active'));
   check('сетка не пуста', !!el('levelGrid').innerHTML);
+  check('точки биомов на уровнях', el('levelGrid').innerHTML.indexOf('biome-dot') !== -1);
 });
 
 step('рекорды', () => {
@@ -81,7 +100,11 @@ step('играть испытание', () => {
 step('настройки и язык', () => {
   el('btnPause').click();
   el('btnPauseSettings').click();
+  const biome = H.win.FlexShot.game.biome;
   el('btnLangEn').click();
+  check('биом переведён на английский',
+    el('hudBiomeName').textContent === biome.en,
+    el('hudBiomeName').textContent + ' / ' + biome.en);
   check('перевод применён', el('screen-settings').innerHTML === '' ? true : true);
   el('btnLangRu').click();
   el('btnSettingsBack').click();

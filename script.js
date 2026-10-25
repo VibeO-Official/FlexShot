@@ -9,6 +9,8 @@
   const OB = window.OB;
   const Gen = window.Gen;
   const Yandex = window.Yandex;
+  const Biomes = window.Biomes;
+  const Art = window.Art;
   const W = OB.W, H = OB.H;
   const SIM_DT = 1 / 120;
   const STORAGE_KEY = 'onebullet_save_v1';
@@ -25,7 +27,7 @@
   // =========================================================
   const TEXTS = {
     ru: {
-      'menu.tagline': 'Одна пуля. Бесконечные рикошеты.',
+      'menu.tagline': 'Одна пуля. Бесконечные миры.',
       'menu.play': 'ИГРАТЬ',
       'menu.levels': 'УРОВНИ',
       'menu.daily': 'ИСПЫТАНИЕ',
@@ -98,11 +100,13 @@
       'hint.patrol': 'Враги двигаются. Цельтесь с упреждением.',
       'hint.energy': 'Энергия управления ограничена. Планируйте выстрел заранее.',
       'hint.ricochets': 'Число рикошетов ограничено — следите за счётчиком.',
+      'biome.label': 'БИОМ',
+      'biome.new': 'Новый биом: {name}',
       'ui.rotate': 'Поверните устройство горизонтально',
       'ach.unlocked': 'ДОСТИЖЕНИЕ: {name}'
     },
     en: {
-      'menu.tagline': 'One bullet. Endless ricochets.',
+      'menu.tagline': 'One bullet. Endless worlds.',
       'menu.play': 'PLAY',
       'menu.levels': 'LEVELS',
       'menu.daily': 'DAILY',
@@ -175,6 +179,8 @@
       'hint.patrol': 'Enemies move. Lead your shot.',
       'hint.energy': 'Steering energy is limited. Plan the shot.',
       'hint.ricochets': 'Ricochets are limited — watch the counter.',
+      'biome.label': 'BIOME',
+      'biome.new': 'New biome: {name}',
       'ui.rotate': 'Rotate your device to landscape',
       'ach.unlocked': 'ACHIEVEMENT: {name}'
     }
@@ -223,6 +229,7 @@
       bestScores: {},
       achievements: {},
       seenTips: {},
+      seenBiomes: {},
       daily: { date: '', attempts: 0, wins: 0, bestAttempts: 0, bestScore: 0, streakDays: 0, lastWinDate: '' },
       settings: { sound: true, volume: 0.7, lang: '', reducedFx: false }
     };
@@ -235,7 +242,7 @@
     Object.keys(base).forEach(function (k) {
       if (raw[k] === undefined || raw[k] === null) return;
       if (k === 'settings' || k === 'daily' || k === 'bestScores' ||
-          k === 'achievements' || k === 'seenTips') {
+          k === 'achievements' || k === 'seenTips' || k === 'seenBiomes') {
         if (typeof raw[k] === 'object') {
           Object.keys(raw[k]).forEach(function (kk) { base[k][kk] = raw[k][kk]; });
         }
@@ -440,6 +447,9 @@
     canvas: $('game'),
     hud: $('hud'),
     hudLevel: $('hudLevel'),
+    hudBiome: $('hudBiome'),
+    hudBiomeIcon: $('hudBiomeIcon'),
+    hudBiomeName: $('hudBiomeName'),
     hudBounces: $('hudBounces'),
     hudBouncesVal: $('hudBouncesVal'),
     hudEnemies: $('hudEnemies'),
@@ -541,11 +551,15 @@
     screen: 'menu',
     level: null,
     levelIndex: 0,
+    biome: null,
+    floor: null,
     state: null,
     aim: 0,
     preview: null,
     previewBounces: 0,
     acc: 0,
+    recoil: 0,
+    clock: 0,
     fx: { particles: [], rings: [], shake: 0, flash: 0, flashColor: COLORS.enemy, slow: 0, slowTarget: 0 },
     keys: { left: false, right: false, fast: false, slow: false },
     session: null,
@@ -611,8 +625,18 @@
     if (index < 0 || Game.prefetched[index]) return;
     const run = function () {
       try {
-        Gen.generate(index, { worldSeed: save.worldSeed });
+        const lvl = Gen.generate(index, { worldSeed: save.worldSeed });
         Game.prefetched[index] = true;
+        if (Art && Biomes) {
+          const biome = Biomes.byId(lvl.biome || Biomes.forLevel(lvl.index, save.worldSeed).id);
+          // Заранее готовим пол и спрайты деревьев — переход без рывка
+          floorFor(lvl, biome);
+          for (let i = 0; i < lvl.walls.length; i++) {
+            const wall = lvl.walls[i];
+            if (wall.id === 'bT' || wall.id === 'bB' || wall.id === 'bL' || wall.id === 'bR') continue;
+            Art.treeSprite(wall, biome);
+          }
+        }
       } catch (e) { /* генерация повторится при запуске */ }
     };
     // Готовим следующий уровень в простое, чтобы не ронять FPS
@@ -633,9 +657,18 @@
     Game.level = lvl;
     Game.levelIndex = index;
     Game.state = OB.createState(lvl);
+
+    // Биом и его пол рисуются кодом (см. js/biomes.js и js/art.js)
+    const biome = Biomes
+      ? Biomes.byId(lvl.biome || Biomes.forLevel(lvl.index, save.worldSeed).id)
+      : null;
+    Game.biome = biome;
+    Game.floor = biome ? floorFor(lvl, biome) : null;
     Game.aim = Math.atan2(H / 2 - lvl.player.y, W / 2 - lvl.player.x);
     Game.previewBounces = lvl.previewBounces || 0;
     Game.acc = 0;
+    Game.recoil = 0;
+    applyBiomeUI(biome);
     Game.session = {
       index: index, daily: daily, shots: 0, fails: 0,
       usedSteer: false, startedAt: Date.now(), done: false
@@ -656,6 +689,12 @@
     recomputePreview();
     updateHUD();
     showLevelTip(lvl);
+
+    if (biome && !save.seenBiomes[biome.id]) {
+      save.seenBiomes[biome.id] = 1;
+      persist();
+      if (!daily) toast(t('biome.new', { name: Biomes.name(biome, lang) }), 2200);
+    }
 
     if (!daily) {
       save.levelIndex = index;
@@ -712,6 +751,7 @@
     if (!OB.fire(Game.state, Game.aim)) return;
 
     Game.session.shots++;
+    Game.recoil = 1;
     save.attempts++;
     if (Game.session.daily) save.daily.attempts = (save.daily.attempts || 0) + 1;
     persist();
@@ -901,13 +941,18 @@
   }
 
   function spawnMuzzle() {
-    if (!Game.state) return;
-    const b = Game.state.bullet;
-    burst(b.x, b.y, COLORS.accent, 14, 190);
-    Game.fx.rings.push({ x: b.x, y: b.y, r: 4, max: 38, color: COLORS.accent, life: 1 });
+    if (!Game.state || !Game.level) return;
+    const p = Game.level.player;
+    // Вспышка у дула пистолета, а не в центре стикмена
+    const mx = p.x + Math.cos(Game.aim) * 22;
+    const my = p.y + Math.sin(Game.aim) * 22;
+    burst(mx, my, COLORS.accent, 14, 190);
+    Game.fx.rings.push({ x: mx, y: my, r: 4, max: 38, color: COLORS.accent, life: 1 });
   }
 
   function updateFx(dt) {
+    Game.clock += dt;
+    Game.recoil = Math.max(0, Game.recoil - dt * 7);
     const p = Game.fx.particles;
     for (let i = p.length - 1; i >= 0; i--) {
       const q = p[i];
@@ -1016,6 +1061,8 @@
     const st = Game.state, lvl = Game.level;
     if (!st || !lvl) return;
 
+    if (Game.biome) applyBiomeUI(Game.biome);
+
     const levelText = (Game.session && Game.session.daily ? 'DAILY · ' : 'LEVEL ') + (lvl.index + 1);
     if (levelText !== hudCache.level) {
       dom.hudLevel.textContent = levelText;
@@ -1084,8 +1131,11 @@
       : t(win ? 'result.win' : 'result.fail');
 
     if (win) {
+      const biomeSuffix = Game.biome && Biomes
+        ? ' · ' + Biomes.name(Game.biome, lang)
+        : '';
       dom.resultSub.textContent = (r.record ? t('result.newRecord') + ' · ' : '') +
-        (daily ? utcDateKey() : 'ARENA ' + (Game.levelIndex + 1));
+        (daily ? utcDateKey() : 'ARENA ' + (Game.levelIndex + 1) + biomeSuffix);
     } else {
       dom.resultSub.textContent = t('fail.' + (r.reason || 'miss'));
     }
@@ -1141,12 +1191,16 @@
       const isCurrent = i === maxUnlocked;
       const locked = i > maxUnlocked;
       const best = save.bestScores[i] || 0;
+      const bio = Biomes ? Biomes.forLevel(i, save.worldSeed) : null;
+      const bioName = bio ? Biomes.name(bio, lang) : '';
       const cls = ['level-cell'];
       if (cleared) cls.push('cleared');
       if (isCurrent) cls.push('current');
       if (locked) cls.push('locked');
       html += '<button class="' + cls.join(' ') + '" data-index="' + i + '"' +
+        ' title="' + bioName + '"' +
         (locked ? ' disabled' : '') + '>' + (i + 1) +
+        (bio ? '<i class="biome-dot" style="background:' + bio.accent + '"></i>' : '') +
         '<small>' + (locked ? '🔒' : (best || (cleared ? '★' : '▶'))) + '</small></button>';
     }
 
@@ -1200,7 +1254,11 @@
 
     dom.dailyDate.textContent = dateStr;
     dom.dailyDate.setAttribute('data-key', key);
-    dom.dailyLevel.textContent = 'ARENA ' + (dailyIndex() + 1);
+    const dailyBiome = Biomes
+      ? Biomes.forLevel(dailyIndex(), dailySeed())
+      : null;
+    dom.dailyLevel.textContent = 'ARENA ' + (dailyIndex() + 1) +
+      (dailyBiome ? ' · ' + dailyBiome.icon + ' ' + Biomes.name(dailyBiome, lang) : '');
     dom.dailyCountdown.textContent = countdownText();
     dom.dailyStats.innerHTML = [
       statCard(save.daily.bestAttempts || '—', t('daily.best')),
@@ -1267,6 +1325,43 @@
   // =========================================================
   const view = { scale: 1, dpr: 1 };
 
+  // Пол уровня строится один раз и кешируется на несколько уровней
+  const floorCache = new Map();
+
+  function floorFor(lvl, biome) {
+    if (!Art) return null;
+    const key = (lvl.seed || ('i' + lvl.index)) + '|' + biome.id;
+    let canvas = floorCache.get(key);
+    if (canvas) return canvas;
+    canvas = Art.buildFloor(lvl, biome);
+    if (floorCache.size >= 3) {
+      const oldest = floorCache.keys().next().value;
+      if (oldest) floorCache.delete(oldest);
+    }
+    floorCache.set(key, canvas);
+    return canvas;
+  }
+
+  const biomeUi = { name: '', icon: '', accent: '' };
+
+  function applyBiomeUI(biome) {
+    if (!biome || !Biomes) return;
+    const name = Biomes.name(biome, lang);
+    if (dom.hudBiomeName && name !== biomeUi.name) {
+      dom.hudBiomeName.textContent = name;
+      biomeUi.name = name;
+      if (dom.hudBiome) dom.hudBiome.title = t('biome.label') + ': ' + name;
+    }
+    if (dom.hudBiomeIcon && biome.icon !== biomeUi.icon) {
+      dom.hudBiomeIcon.textContent = biome.icon;
+      biomeUi.icon = biome.icon;
+    }
+    if (dom.hudBiome && biome.accent !== biomeUi.accent) {
+      dom.hudBiome.style.borderColor = Art ? Art.color(biome.accent, 0.55) : biome.accent;
+      biomeUi.accent = biome.accent;
+    }
+  }
+
   function resizeCanvas() {
     const rect = dom.canvas.getBoundingClientRect();
     const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -1285,187 +1380,27 @@
   let bgCanvas = null;
 
   function buildBackground() {
+    // Меню/пауза: тот же остров, но в биоме равнин
+    if (Art && Biomes) {
+      bgCanvas = Art.buildFloor(null, Biomes.byId('plains'));
+      return;
+    }
     const c = document.createElement('canvas');
     c.width = W;
     c.height = H;
     const g = c.getContext('2d');
-
-    const grad = g.createLinearGradient(0, 0, W, H);
-    grad.addColorStop(0, '#171C27');
-    grad.addColorStop(0.5, '#151923');
-    grad.addColorStop(1, '#12161F');
-    g.fillStyle = grad;
+    g.fillStyle = COLORS.bg;
     g.fillRect(0, 0, W, H);
-
-    g.strokeStyle = 'rgba(255,255,255,0.028)';
-    g.lineWidth = 1;
-    for (let x = OB.BORDER; x <= W - OB.BORDER; x += 64) {
-      g.beginPath(); g.moveTo(x, OB.BORDER); g.lineTo(x, H - OB.BORDER); g.stroke();
-    }
-    for (let y = OB.BORDER; y <= H - OB.BORDER; y += 64) {
-      g.beginPath(); g.moveTo(OB.BORDER, y); g.lineTo(W - OB.BORDER, y); g.stroke();
-    }
-
-    const vg = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35,
-      W / 2, H / 2, Math.max(W, H) * 0.72);
-    vg.addColorStop(0, 'rgba(0,0,0,0)');
-    vg.addColorStop(1, 'rgba(0,0,0,0.55)');
-    g.fillStyle = vg;
-    g.fillRect(0, 0, W, H);
-
     bgCanvas = c;
   }
 
   // =========================================================
   // Отрисовка стен и механизмов
   // =========================================================
-  function drawWallShape(w, kind) {
-    const t = Game.state ? Game.state.t : 0;
-    const rect = OB.wallRect(w, t);
-    const x = rect.x, y = rect.y, rw = rect.w, rh = rect.h;
-
-    ctx.save();
-    switch (kind) {
-      case 'bouncy':
-        ctx.fillStyle = 'rgba(255,107,53,0.16)';
-        ctx.strokeStyle = 'rgba(255,107,53,0.85)';
-        break;
-      case 'soft':
-        ctx.fillStyle = 'rgba(138,123,255,0.14)';
-        ctx.strokeStyle = 'rgba(160,148,255,0.8)';
-        break;
-      case 'block':
-        ctx.fillStyle = 'rgba(48,16,26,0.95)';
-        ctx.strokeStyle = 'rgba(255,59,92,0.85)';
-        break;
-      case 'glass':
-        ctx.fillStyle = 'rgba(56,232,255,0.13)';
-        ctx.strokeStyle = 'rgba(56,232,255,0.7)';
-        break;
-      case 'door':
-        ctx.fillStyle = 'rgba(56,232,255,0.18)';
-        ctx.strokeStyle = 'rgba(56,232,255,0.95)';
-        break;
-      case 'mover':
-        ctx.fillStyle = 'rgba(40,48,64,0.95)';
-        ctx.strokeStyle = 'rgba(148,163,190,0.9)';
-        break;
-      default:
-        ctx.fillStyle = COLORS.wallFill;
-        ctx.strokeStyle = COLORS.wall;
-    }
-
-    ctx.lineWidth = 2;
-    if (kind === 'glass' || kind === 'soft') ctx.setLineDash([7, 6]);
-    ctx.beginPath();
-    ctx.rect(x + 1, y + 1, rw - 2, rh - 2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    if (kind === 'mirror' || kind === 'mover') {
-      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-      ctx.beginPath();
-      ctx.moveTo(x + 2, y + 2);
-      ctx.lineTo(x + rw - 2, y + 2);
-      ctx.stroke();
-    }
-
-    if (kind === 'block') {
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(x, y, rw, rh);
-      ctx.clip();
-      ctx.strokeStyle = 'rgba(255,59,92,0.35)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (let i = -rh; i < rw; i += 12) {
-        ctx.moveTo(x + i, y);
-        ctx.lineTo(x + i + rh, y + rh);
-      }
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    if (kind === 'bouncy') {
-      ctx.strokeStyle = 'rgba(255,107,53,0.7)';
-      ctx.lineWidth = 2;
-      const horiz = rw > rh;
-      const n = Math.max(1, Math.floor((horiz ? rw : rh) / 34));
-      for (let i = 0; i < n; i++) {
-        const px = horiz ? x + 16 + i * 34 : x + rw / 2;
-        const py = horiz ? y + rh / 2 : y + 16 + i * 34;
-        ctx.beginPath();
-        if (horiz) {
-          ctx.moveTo(px - 5, py - 6); ctx.lineTo(px + 3, py); ctx.lineTo(px - 5, py + 6);
-        } else {
-          ctx.moveTo(px - 6, py - 5); ctx.lineTo(px, py + 3); ctx.lineTo(px + 6, py - 5);
-        }
-        ctx.stroke();
-      }
-    }
-
-    if (kind === 'mover') {
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-      ctx.setLineDash([4, 7]);
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      if (w.axis === 'x') {
-        ctx.moveTo(w.x - w.amp + w.w / 2, w.y + w.h / 2);
-        ctx.lineTo(w.x + w.amp + w.w / 2, w.y + w.h / 2);
-      } else {
-        ctx.moveTo(w.x + w.w / 2, w.y - w.amp + w.h / 2);
-        ctx.lineTo(w.x + w.w / 2, w.y + w.amp + w.h / 2);
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
-    ctx.restore();
-  }
-
-  function drawWalls() {
-    const lvl = Game.level, st = Game.state;
-    if (!lvl) return;
-    for (let i = 0; i < lvl.walls.length; i++) {
-      const w = lvl.walls[i];
-
-      if (st && st.brokenWalls.indexOf(w.id) !== -1) {
-        ctx.save();
-        ctx.fillStyle = 'rgba(56,232,255,0.2)';
-        const cx = w.x + w.w / 2, cy = w.y + w.h / 2;
-        for (let k = 0; k < 6; k++) {
-          const a = (k / 6) * Math.PI * 2 + 0.4;
-          ctx.beginPath();
-          ctx.arc(cx + Math.cos(a) * 22, cy + Math.sin(a) * 22, 2.2, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
-        continue;
-      }
-
-      if (w.type === 'door') {
-        let open = false;
-        if (st) {
-          for (let k = 0; k < st.doors.length; k++) {
-            if (st.doors[k].def.id === w.id && st.doors[k].open) open = true;
-          }
-        }
-        if (open) {
-          ctx.save();
-          ctx.strokeStyle = 'rgba(56,232,255,0.28)';
-          ctx.setLineDash([5, 8]);
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(w.x + 1, w.y + 1, w.w - 2, w.h - 2);
-          ctx.restore();
-          continue;
-        }
-        drawWallShape(w, 'door');
-        continue;
-      }
-
-      drawWallShape(w, w.type);
-    }
+  function drawWalls(timeSec) {
+    // Стены — деревья биома: у каждой стены свой спрайт (кеш в Art)
+    if (!Art || !Game.biome) return;
+    Art.drawWalls(ctx, Game.level, Game.state, timeSec, Game.biome);
   }
 
   function drawWells(timeSec) {
@@ -1475,6 +1410,11 @@
       const w = lvl.wells[i];
       ctx.save();
       ctx.translate(w.x, w.y);
+
+      ctx.fillStyle = 'rgba(16,8,26,0.28)';
+      ctx.beginPath();
+      ctx.arc(0, 0, w.r + 2, 0, Math.PI * 2);
+      ctx.fill();
 
       const grad = ctx.createRadialGradient(0, 0, w.r * 0.15, 0, 0, w.r);
       grad.addColorStop(0, 'rgba(185,140,255,0.16)');
@@ -1537,6 +1477,14 @@
       const flash = st && st.switches[i] ? st.switches[i].flash : 0;
       ctx.save();
       ctx.translate(s.x, s.y);
+
+      // Каменная плита — чтобы кристалл читался на траве
+      ctx.fillStyle = 'rgba(36,44,38,0.55)';
+      ctx.fillRect(-21, -21, 42, 42);
+      ctx.strokeStyle = 'rgba(16,24,20,0.55)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(-21, -21, 42, 42);
+
       ctx.rotate(Math.PI / 4);
       const size = 11 + (on ? 1.5 : 0) + flash * 3;
       if (on) {
@@ -1544,7 +1492,7 @@
         ctx.shadowBlur = 18;
         ctx.fillStyle = 'rgba(56,232,255,0.9)';
       } else {
-        ctx.fillStyle = 'rgba(56,232,255,0.12)';
+        ctx.fillStyle = 'rgba(56,232,255,0.2)';
       }
       ctx.strokeStyle = COLORS.mech;
       ctx.lineWidth = 2;
@@ -1575,6 +1523,10 @@
       const color = isA ? COLORS.mech : COLORS.accent;
       ctx.save();
       ctx.translate(p.x, p.y);
+      ctx.fillStyle = 'rgba(10,20,24,0.35)';
+      ctx.beginPath();
+      ctx.arc(0, 0, OB.PORTAL_R + 2, 0, Math.PI * 2);
+      ctx.fill();
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
       ctx.shadowColor = color;
@@ -1599,104 +1551,34 @@
 
   function drawEnemies(timeSec) {
     const st = Game.state;
-    if (!st) return;
+    if (!st || !Art || !Game.biome) return;
     const tmp = { x: 0, y: 0 };
+    const player = Game.level.player;
 
     for (let i = 0; i < st.enemies.length; i++) {
       const e = st.enemies[i];
-      if (!e.alive) continue;
       OB.enemyPos(e.def, st.t, tmp);
-      const x = tmp.x, y = tmp.y;
-      const r = e.def.r || OB.ENEMY_R;
+      // Время смерти считаем по игровым часам: после победы st.t замирает
+      if (!e.alive && e.deathAt == null) e.deathAt = Game.clock;
 
-      ctx.save();
-      ctx.strokeStyle = 'rgba(255,59,92,0.16)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([3, 6]);
-      if (e.def.move && e.def.move.type === 'patrol') {
-        const m = e.def.move;
-        ctx.beginPath();
-        ctx.moveTo(e.def.x - (m.ax === 'x' ? m.amp : 0), e.def.y - (m.ax === 'y' ? m.amp : 0));
-        ctx.lineTo(e.def.x + (m.ax === 'x' ? m.amp : 0), e.def.y + (m.ax === 'y' ? m.amp : 0));
-        ctx.stroke();
-      } else if (e.def.move && e.def.move.type === 'orbit') {
-        const m = e.def.move;
-        ctx.beginPath();
-        ctx.arc(m.cx, m.cy, m.r, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      const pulse = 1 + Math.sin(timeSec * 3 + i) * 0.05;
-      ctx.save();
-      ctx.shadowColor = COLORS.enemy;
-      ctx.shadowBlur = 18;
-      ctx.fillStyle = 'rgba(255,59,92,0.22)';
-      ctx.beginPath();
-      ctx.arc(x, y, r * 1.5 * pulse, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = 'rgba(255,59,92,0.95)';
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = '#2A0A12';
-      ctx.beginPath();
-      ctx.arc(x, y, r * 0.55, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#FFD9E0';
-      ctx.beginPath();
-      ctx.arc(x, y, r * 0.22, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
+      Art.drawEnemy(ctx, e.def, tmp.x, tmp.y, e.def.r || OB.ENEMY_R, timeSec, {
+        biome: Game.biome,
+        index: i,
+        alive: e.alive,
+        age: e.alive ? 0 : Game.clock - (e.deathAt || 0),
+        player: player
+      });
     }
   }
 
   function drawPlayer(timeSec) {
     const lvl = Game.level, st = Game.state;
-    if (!lvl || !st) return;
-    const p = lvl.player;
-    const charging = st.status === 'aiming';
-
-    ctx.save();
-    ctx.translate(p.x, p.y);
-
-    if (charging) {
-      const ringR = p.r + 8 + Math.sin(timeSec * 2.4) * 2;
-      ctx.strokeStyle = 'rgba(56,232,255,0.35)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(0, 0, ringR, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-
-    ctx.save();
-    ctx.rotate(Game.aim);
-    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
-    ctx.lineWidth = 4;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(p.r + 12, 0);
-    ctx.stroke();
-    ctx.restore();
-
-    ctx.fillStyle = '#0E121A';
-    ctx.strokeStyle = charging ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.4)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(0, 0, p.r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = charging ? COLORS.mech : 'rgba(124,134,152,0.7)';
-    ctx.beginPath();
-    ctx.arc(0, 0, 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    if (!lvl || !st || !Art || !Game.biome) return;
+    Art.drawPlayer(ctx, lvl, Game.aim, timeSec, {
+      biome: Game.biome,
+      aiming: st.status === 'aiming',
+      recoil: Game.recoil
+    });
   }
 
   // Честный предпросмотр: та же физика, что и у настоящего выстрела
@@ -1707,42 +1589,63 @@
     if (pts.length < 2) return;
 
     ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,0.28)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([6, 7]);
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for (let i = 1; i < pts.length; i++) {
-      if (Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y) > 60) {
-        ctx.moveTo(pts[i].x, pts[i].y); // телепорт — линию не тянем
-      } else {
-        ctx.lineTo(pts[i].x, pts[i].y);
+
+    // Траектория: тёмная подложка + светлый пунктир — видно и на траве, и на песке
+    const tracePath = function (color, width) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) {
+        if (Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y) > 60) {
+          ctx.moveTo(pts[i].x, pts[i].y); // телепорт — линию не тянем
+        } else {
+          ctx.lineTo(pts[i].x, pts[i].y);
+        }
       }
-    }
-    ctx.stroke();
+      ctx.stroke();
+    };
+
+    ctx.setLineDash([6, 7]);
+    tracePath('rgba(8,18,10,0.32)', 3.6);
+    tracePath('rgba(255,255,255,0.6)', 1.5);
     ctx.setLineDash([]);
 
-    ctx.fillStyle = 'rgba(255,107,53,0.55)';
     for (let i = 2; i < pts.length; i += 3) {
+      ctx.fillStyle = 'rgba(255,107,53,0.6)';
       ctx.beginPath();
-      ctx.arc(pts[i].x, pts[i].y, 1.6, 0, Math.PI * 2);
+      ctx.arc(pts[i].x, pts[i].y, 1.9, 0, Math.PI * 2);
       ctx.fill();
     }
 
     const b = Game.preview.bounces || [];
     for (let i = 0; i < b.length; i++) {
-      ctx.strokeStyle = 'rgba(255,107,53,0.75)';
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(8,18,10,0.35)';
+      ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.arc(b[i].x, b[i].y, 6, 0, Math.PI * 2);
+      ctx.arc(b[i].x, b[i].y, 7, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,138,70,0.95)';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.arc(b[i].x, b[i].y, 7, 0, Math.PI * 2);
       ctx.stroke();
     }
 
     const p = Game.level.player;
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    const ax = p.x + Math.cos(Game.aim) * 1000;
+    const ay = p.y + Math.sin(Game.aim) * 1000;
+    ctx.strokeStyle = 'rgba(8,18,10,0.18)';
+    ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
-    ctx.lineTo(p.x + Math.cos(Game.aim) * 1000, p.y + Math.sin(Game.aim) * 1000);
+    ctx.lineTo(ax, ay);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(ax, ay);
     ctx.stroke();
     ctx.restore();
   }
@@ -1752,6 +1655,17 @@
     if (!st) return;
     const b = st.bullet;
     if (!b.active) return;
+
+    // Тёмная подложка трассера — пуля видна и на снегу, и на песке
+    for (let i = 1; i < b.trail.length; i++) {
+      const a = i / b.trail.length;
+      ctx.strokeStyle = 'rgba(20,12,6,' + (a * 0.18).toFixed(3) + ')';
+      ctx.lineWidth = 3 + a * 3.6;
+      ctx.beginPath();
+      ctx.moveTo(b.trail[i - 1].x, b.trail[i - 1].y);
+      ctx.lineTo(b.trail[i].x, b.trail[i].y);
+      ctx.stroke();
+    }
 
     for (let i = 1; i < b.trail.length; i++) {
       const a = i / b.trail.length;
@@ -1766,6 +1680,10 @@
     if (st.status !== 'flying' && st.status !== 'win') return;
 
     ctx.save();
+    ctx.fillStyle = 'rgba(24,14,6,0.42)';
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, OB.BULLET_R + 2.6, 0, Math.PI * 2);
+    ctx.fill();
     ctx.shadowColor = COLORS.bullet;
     ctx.shadowBlur = 22;
     ctx.fillStyle = COLORS.bullet;
@@ -1828,9 +1746,9 @@
         (Math.random() - 0.5) * Game.fx.shake * 14);
     }
 
-    ctx.drawImage(bgCanvas, 0, 0, W, H);
+    ctx.drawImage(Game.floor || bgCanvas, 0, 0, W, H);
     if (Game.level) {
-      drawWalls();
+      drawWalls(timeSec);
       drawWells(timeSec);
       drawSwitches();
       drawPortals(timeSec);
@@ -1839,6 +1757,11 @@
       drawBullet();
       drawPlayer(timeSec);
       drawParticles();
+      if (Art && Game.biome) {
+        Art.drawWeather(ctx, Game.biome, timeSec, {
+          width: W, height: H, reduced: !!save.settings.reducedFx
+        });
+      }
     }
     ctx.restore();
 
