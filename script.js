@@ -223,7 +223,7 @@
       bestScores: {},
       achievements: {},
       seenTips: {},
-      daily: { date: '', attempts: 0, wins: 0, bestAttempts: 0, streakDays: 0, lastWinDate: '' },
+      daily: { date: '', attempts: 0, wins: 0, bestAttempts: 0, bestScore: 0, streakDays: 0, lastWinDate: '' },
       settings: { sound: true, volume: 0.7, lang: '', reducedFx: false }
     };
   }
@@ -596,6 +596,7 @@
         attempts: 0,
         wins: 0,
         bestAttempts: (save.daily && save.daily.bestAttempts) || 0,
+        bestScore: (save.daily && save.daily.bestScore) || 0,
         streakDays: (save.daily && save.daily.streakDays) || 0,
         lastWinDate: (save.daily && save.daily.lastWinDate) || ''
       };
@@ -760,6 +761,7 @@
       save.daily.wins = (save.daily.wins || 0) + 1;
       const prevBest = save.daily.bestAttempts || 0;
       if (!prevBest || Game.session.shots < prevBest) save.daily.bestAttempts = Game.session.shots;
+      if (score > (save.daily.bestScore || 0)) save.daily.bestScore = score;
 
       const today = utcDateKey();
       if (save.daily.lastWinDate !== today) {
@@ -1202,6 +1204,7 @@
     dom.dailyCountdown.textContent = countdownText();
     dom.dailyStats.innerHTML = [
       statCard(save.daily.bestAttempts || '—', t('daily.best')),
+      statCard(save.daily.bestScore || 0, t('result.score')),
       statCard(save.daily.attempts || 0, t('daily.attempts')),
       statCard(save.daily.wins || 0, t('daily.wins')),
       statCard(save.daily.streakDays || 0, t('daily.streak'))
