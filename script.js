@@ -1478,12 +1478,16 @@
       ctx.save();
       ctx.translate(s.x, s.y);
 
-      // Каменная плита — чтобы кристалл читался на траве
+      // Круглая каменная плита — чтобы кристалл читался на траве
       ctx.fillStyle = 'rgba(36,44,38,0.55)';
-      ctx.fillRect(-21, -21, 42, 42);
+      ctx.beginPath();
+      ctx.arc(0, 0, 21, 0, Math.PI * 2);
+      ctx.fill();
       ctx.strokeStyle = 'rgba(16,24,20,0.55)';
       ctx.lineWidth = 1.5;
-      ctx.strokeRect(-21, -21, 42, 42);
+      ctx.beginPath();
+      ctx.arc(0, 0, 21, 0, Math.PI * 2);
+      ctx.stroke();
 
       ctx.rotate(Math.PI / 4);
       const size = 11 + (on ? 1.5 : 0) + flash * 3;
