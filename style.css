@@ -1,6 +1,7 @@
 /* =========================================================
    ONE BULLET / FlexShot — style.css
-   Неоновый минимализм. Адаптивность через container queries.
+   Тёмный интерфейс поверх процедурных биомов.
+   Адаптивность через container queries.
    ========================================================= */
 :root {
   --bg: #0B0D12;
@@ -261,6 +262,18 @@ body {
 .hud-chip.danger { color: var(--enemy); border-color: rgba(255, 59, 92, 0.4); }
 .hud-chip.danger span { color: #FFC7D1; }
 
+.hud-chip.biome {
+  color: #F2F8E8;
+  background: rgba(10, 20, 12, 0.72);
+  border-color: rgba(143, 214, 79, 0.45);
+  letter-spacing: 0.07em;
+  max-width: clamp(96px, 17cqw, 200px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-chip.biome span:first-child { filter: saturate(1.15); }
+
 .hud-energy { width: clamp(110px, 22cqw, 260px); align-self: center; margin-top: 2px; }
 
 .hud-energy-top {
@@ -477,6 +490,18 @@ body {
 .level-cell.locked { color: #4A5162; cursor: default; background: rgba(255, 255, 255, 0.015); }
 .level-cell.locked:hover { transform: none; border-color: rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.015); }
 .level-cell small { font-size: 0.62em; font-weight: 600; opacity: 0.7; letter-spacing: 0.04em; }
+
+/* Цветная точка биома в углу уровня */
+.biome-dot {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.35);
+  opacity: 0.95;
+}
 
 .levels-pager {
   display: flex;
@@ -702,6 +727,8 @@ input[type="range"]::-moz-range-thumb {
 @media (max-width: 760px), (pointer: coarse) {
   #stage { border-radius: 0; }
   .hud-energy { width: clamp(80px, 26cqw, 160px); }
+  .hud-chip.biome span:last-child { display: none; }
+  .hud-chip.biome { padding: 0.4em 0.55em; }
   .menu-buttons { width: min(360px, 88cqw); }
   .panel { width: 94cqw; margin: 8px auto; max-height: 88cqh; }
   #hint { bottom: clamp(92px, 20cqh, 150px); }

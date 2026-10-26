@@ -200,7 +200,9 @@ function boot(opts) {
   function flush(ms) { flushTimers(ms || 0); }
 
   load('js/engine.js');
+  load('js/biomes.js');
   load('js/generator.js');
+  load('js/art.js');
   load('js/yandex.js');
   load('script.js');
 
