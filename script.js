@@ -2112,11 +2112,13 @@
 
   // Небольшой публичный API: полезен для отладки и встраивания
   window.FlexShot = {
-    version: '1.0.0',
+    version: '1.1.0',
     startLevel: startLevel,
     restartLevel: restartLevel,
     fire: fire,
     game: Game,
+    biomes: Biomes,
+    art: Art,
     getSave: function () { return save; }
   };
 

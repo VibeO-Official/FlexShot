@@ -51,6 +51,7 @@ check('полный круг биомов за 2×N уровней', seen.size =
 check('название на русском', Biomes.name(a, 'ru') === a.ru);
 check('название на английском', Biomes.name(a, 'en') === a.en);
 check('неизвестный id → равнины', Biomes.byId('nope').id === 'plains');
+check('первый уровень — равнины', Biomes.forLevel(0, 'any-seed').id === 'plains');
 
 // ---------- связка с генератором ----------
 const lvl = Gen.generate(17, { worldSeed: 'biome-test' });
@@ -58,6 +59,8 @@ check('у уровня есть биом', !!lvl.biome && Biomes.ids.indexOf(lvl
 check('биом уровня совпадает с выбором UI',
   lvl.biome === Biomes.forLevel(17, 'biome-test').id,
   lvl.biome + ' / ' + Biomes.forLevel(17, 'biome-test').id);
+const first = Gen.generate(0, { worldSeed: 'biome-test' });
+check('первый уровень проходим в равнинах', first.biome === 'plains', first.biome);
 
 const daily = Gen.generate(37, { seed: 'daily-2026-01-01', worldSeed: 'biome-test' });
 check('ежедневное испытание: биом из seed',

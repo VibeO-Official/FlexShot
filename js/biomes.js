@@ -256,6 +256,8 @@
    * а соседние уровни — разные (шаг взаимно прост с числом биомов).
    */
   function forLevel(index, seed) {
+    // Первый уровень — всегда равнины: обучение начинается со светлой травы
+    if (Math.floor(index || 0) === 0) return BIOMES[0];
     const n = BIOMES.length;
     const salt = hash('biome:' + (seed || 'flexshot')) % n;
     const i = ((Math.floor(index || 0) * STEP + salt) % n + n) % n;

@@ -18,7 +18,7 @@
   const TAU = Math.PI * 2;
   const W = 1280, H = 720;
   const PAD = 18;                 // запас спрайта дерева под крону, тень и листву
-  const TREE_CACHE_LIMIT = 120;
+  const TREE_CACHE_LIMIT = 160;
 
   // =========================================================
   // Цвета и детерминированный «шум»
@@ -1010,9 +1010,11 @@
       g.fillStyle = glow;
       g.fillRect(0, 0, w, h);
     } else {
-      // Сухие листья на мёртвом дереве
-      for (let i = 0; i < 4; i++) {
-        g.fillStyle = rgba(biome.leaf.base, 0.45);
+      // Сухие листья на мёртвом дереве — отличают обычную стену от поглотителя
+      for (let i = 0; i < 8; i++) {
+        g.fillStyle = rng() < 0.35
+          ? rgba(biome.flower[0] || '#FFB347', 0.4)
+          : rgba(biome.leaf.light, 0.5);
         g.beginPath();
         g.ellipse(rng() * w, rng() * h, 4 + rng() * 7, 3 + rng() * 5, rng() * 3, 0, TAU);
         g.fill();
