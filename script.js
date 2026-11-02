@@ -10,6 +10,7 @@
   const Gen = window.Gen;
   const Yandex = window.Yandex;
   const Biomes = window.Biomes;
+  const Skins = window.Skins;
   const Art = window.Art;
   const W = OB.W, H = OB.H;
   const SIM_DT = 1 / 120;
@@ -33,6 +34,7 @@
       'menu.daily': 'ИСПЫТАНИЕ',
       'menu.records': 'РЕКОРДЫ',
       'menu.settings': 'НАСТРОЙКИ',
+      'menu.skins': 'СКИНЫ',
       'menu.note': 'Прогресс сохраняется в браузере',
       'menu.progress': 'УРОВЕНЬ {n} · ПРОЙДЕНО {w} · СЕРИЯ {s}',
       'hud.energy': 'ЭНЕРГИЯ',
@@ -56,7 +58,7 @@
       'settings.fx': 'Меньше эффектов',
       'settings.lang': 'Язык',
       'settings.reset': 'СБРОСИТЬ ПРОГРЕСС',
-      'settings.resetNote': 'Сброс удалит открытые уровни, рекорды и достижения.',
+      'settings.resetNote': 'Сброс удалит уровни, рекорды, достижения, монеты и скины.',
       'settings.resetDone': 'Прогресс сброшен',
       'pause.title': 'ПАУЗА',
       'pause.resume': 'ПРОДОЛЖИТЬ',
@@ -90,7 +92,7 @@
       'fail.miss': 'Цели остались целы.',
       'hint.first': 'Прицельтесь мышью и выстрелите. Убить нужно всех врагов.',
       'hint.bounce': 'Стены отражают пулю. Постройте траекторию через рикошеты.',
-      'hint.steer': 'В полёте: A/D — подруливать, W/S — скорость. Это тратит энергию.',
+      'hint.steer': 'В полёте: A/D или движение мыши — поворот, W/S — скорость. На телефоне — джойстик.',
       'hint.bouncy': 'Оранжевые стены ускоряют пулю, фиолетовые — гасят.',
       'hint.switch': 'Активируйте переключатель: он открывает дверь на пути.',
       'hint.block': 'Тёмные блоки с красной штриховкой поглощают пулю.',
@@ -102,6 +104,30 @@
       'hint.ricochets': 'Число рикошетов ограничено — следите за счётчиком.',
       'biome.label': 'БИОМ',
       'biome.new': 'Новый биом: {name}',
+      'skins.title': 'СКИНЫ',
+      'skins.case': 'КЕЙС СКИНОВ',
+      'skins.open': 'ОТКРЫТЬ КЕЙС · {n}',
+      'skins.caseNote': 'Внутри — случайный скин пули или оружия. Повторы не выпадают.',
+      'skins.bullets': 'ПУЛИ',
+      'skins.weapons': 'ОРУЖИЕ',
+      'skins.take': 'ЗАБРАТЬ',
+      'skins.disclaimer': 'Скины меняют только внешний вид — физика и баланс уровней прежние.',
+      'skins.progress': 'Открыто {n} из {total}',
+      'skins.newItem': 'НОВЫЙ СКИН',
+      'skins.coinsPrize': 'КОМПЕНСАЦИЯ',
+      'skins.allOwned': 'Все скины уже собраны!',
+      'skins.equipped': 'НАДЕТО',
+      'skins.equip': 'ВЫБРАТЬ',
+      'skins.locked': 'ЗАКРЫТО',
+      'skins.lockedToast': 'Сначала откройте этот скин в кейсе',
+      'skins.noCoins': 'Не хватает монет: нужно {n}',
+      'skins.equipToast': 'Надето: {name}',
+      'skins.empty': 'Скины закончились — кейс выдаст монеты.',
+      'result.coins': 'МОНЕТЫ',
+      'hud.aim': 'ПРИЦЕЛ',
+      'hud.steer': 'ВЕДИ ПУЛЮ',
+      'hint.stick': 'На телефоне веди пулю джойстиком: влево-вправо — поворот, вверх-вниз — скорость.',
+      'hint.skins': 'За победы дают монеты. Открывай кейсы и выбирай скины пуль и оружия.',
       'ui.rotate': 'Поверните устройство горизонтально',
       'ach.unlocked': 'ДОСТИЖЕНИЕ: {name}'
     },
@@ -112,6 +138,7 @@
       'menu.daily': 'DAILY',
       'menu.records': 'RECORDS',
       'menu.settings': 'SETTINGS',
+      'menu.skins': 'SKINS',
       'menu.note': 'Progress is saved in your browser',
       'menu.progress': 'LEVEL {n} · CLEARED {w} · STREAK {s}',
       'hud.energy': 'ENERGY',
@@ -135,7 +162,7 @@
       'settings.fx': 'Fewer effects',
       'settings.lang': 'Language',
       'settings.reset': 'RESET PROGRESS',
-      'settings.resetNote': 'This deletes unlocked levels, records and achievements.',
+      'settings.resetNote': 'This deletes unlocked levels, records, achievements, coins and skins.',
       'settings.resetDone': 'Progress reset',
       'pause.title': 'PAUSED',
       'pause.resume': 'RESUME',
@@ -169,7 +196,7 @@
       'fail.miss': 'Targets are still alive.',
       'hint.first': 'Aim with the mouse and fire. Every enemy must die.',
       'hint.bounce': 'Walls reflect the bullet. Build your path with ricochets.',
-      'hint.steer': 'In flight: A/D steer, W/S change speed. It drains energy.',
+      'hint.steer': 'In flight: A/D or mouse movement to steer, W/S for speed. On mobile use the stick.',
       'hint.bouncy': 'Orange walls speed the bullet up, purple walls slow it down.',
       'hint.switch': 'Hit the switch to open the door blocking your path.',
       'hint.block': 'Dark blocks with red hatching absorb the bullet.',
@@ -181,6 +208,30 @@
       'hint.ricochets': 'Ricochets are limited — watch the counter.',
       'biome.label': 'BIOME',
       'biome.new': 'New biome: {name}',
+      'skins.title': 'SKINS',
+      'skins.case': 'SKIN CASE',
+      'skins.open': 'OPEN CASE · {n}',
+      'skins.caseNote': 'A random bullet or weapon skin inside. No duplicates.',
+      'skins.bullets': 'BULLETS',
+      'skins.weapons': 'WEAPONS',
+      'skins.take': 'TAKE',
+      'skins.disclaimer': 'Skins are cosmetic only — physics and level balance stay the same.',
+      'skins.progress': 'Unlocked {n} of {total}',
+      'skins.newItem': 'NEW SKIN',
+      'skins.coinsPrize': 'COMPENSATION',
+      'skins.allOwned': 'Every skin is already collected!',
+      'skins.equipped': 'EQUIPPED',
+      'skins.equip': 'EQUIP',
+      'skins.locked': 'LOCKED',
+      'skins.lockedToast': 'Open this skin in a case first',
+      'skins.noCoins': 'Not enough coins: need {n}',
+      'skins.equipToast': 'Equipped: {name}',
+      'skins.empty': 'All skins collected — the case pays coins.',
+      'result.coins': 'COINS',
+      'hud.aim': 'AIM',
+      'hud.steer': 'STEER BULLET',
+      'hint.stick': 'On mobile steer the bullet with the stick: left/right turn, up/down speed.',
+      'hint.skins': 'Wins earn coins. Open cases and pick bullet and weapon skins.',
       'ui.rotate': 'Rotate your device to landscape',
       'ach.unlocked': 'ACHIEVEMENT: {name}'
     }
@@ -230,9 +281,20 @@
       achievements: {},
       seenTips: {},
       seenBiomes: {},
+      coins: 160,
+      ownedBullets: { classic: 1, ember: 1 },
+      ownedWeapons: { pistol: 1 },
+      bulletSkin: 'classic',
+      weaponSkin: 'pistol',
+      casesOpened: 0,
       daily: { date: '', attempts: 0, wins: 0, bestAttempts: 0, bestScore: 0, streakDays: 0, lastWinDate: '' },
       settings: { sound: true, volume: 0.7, lang: '', reducedFx: false }
     };
+  }
+
+  function sanitizeSkins(target) {
+    if (!Skins || !Skins.sanitize) return false;
+    return Skins.sanitize(target || save);
   }
 
   function mergeSave(raw) {
@@ -242,7 +304,8 @@
     Object.keys(base).forEach(function (k) {
       if (raw[k] === undefined || raw[k] === null) return;
       if (k === 'settings' || k === 'daily' || k === 'bestScores' ||
-          k === 'achievements' || k === 'seenTips' || k === 'seenBiomes') {
+          k === 'achievements' || k === 'seenTips' || k === 'seenBiomes' ||
+          k === 'ownedBullets' || k === 'ownedWeapons') {
         if (typeof raw[k] === 'object') {
           Object.keys(raw[k]).forEach(function (kk) { base[k][kk] = raw[k][kk]; });
         }
@@ -251,10 +314,11 @@
       }
     });
 
-    ['levelIndex', 'maxCleared', 'wins', 'attempts', 'streak', 'bestStreak', 'totalBounces']
+    ['levelIndex', 'maxCleared', 'wins', 'attempts', 'streak', 'bestStreak', 'totalBounces', 'coins', 'casesOpened']
       .forEach(function (k) {
         if (typeof base[k] !== 'number' || !isFinite(base[k]) || base[k] < 0) base[k] = 0;
       });
+    sanitizeSkins(base);
     if (!base.worldSeed) base.worldSeed = randomSeed();
     return base;
   }
@@ -415,6 +479,18 @@
       if (!this.ready || !save.settings.sound) return;
       switch (name) {
         case 'fire': this.tone(680, 0.16, 'square', 0.1, 180); break;
+        case 'fire_pistol': this.tone(680, 0.16, 'square', 0.1, 180); break;
+        case 'fire_smg': this.tone(520, 0.09, 'square', 0.08, 260); this.noise(0.06, 0.04); break;
+        case 'fire_rifle': this.tone(380, 0.12, 'square', 0.09, 140); this.noise(0.08, 0.05); break;
+        case 'fire_shotgun': this.noise(0.16, 0.12); this.tone(120, 0.18, 'sawtooth', 0.09, 60); break;
+        case 'fire_sniper': this.noise(0.08, 0.06); this.tone(90, 0.25, 'sawtooth', 0.09, 50); break;
+        case 'fire_minigun': this.noise(0.12, 0.08); this.tone(240, 0.1, 'square', 0.07, 160); break;
+        case 'fire_energy': this.tone(900, 0.2, 'sine', 0.1, 220); this.tone(1320, 0.12, 'sine', 0.06, 420); break;
+        case 'case':
+          this.tone(660, 0.12, 'triangle', 0.09, 990);
+          setTimeout(this.tone.bind(this, 990, 0.16, 'triangle', 0.09), 120);
+          break;
+        case 'coin': this.tone(980, 0.07, 'sine', 0.08, 1320); break;
         case 'bounce': this.tone(320, 0.07, 'triangle', 0.08, 220); break;
         case 'bouncy': this.tone(520, 0.09, 'triangle', 0.09, 760); break;
         case 'soft': this.tone(180, 0.1, 'sine', 0.07, 120); break;
@@ -463,12 +539,30 @@
     btnFire: $('btnFire'),
     btnFireTouch: $('btnFireTouch'),
     menuStats: $('menuStats'),
+    menuCoins: $('menuCoins'),
     levelGrid: $('levelGrid'),
     levelsPageLabel: $('levelsPageLabel'),
     recordsStats: $('recordsStats'),
     achievementsList: $('achievementsList'),
+    skinsCoins: $('skinsCoins'),
+    skinGrid: $('skinGrid'),
+    skinProgress: $('skinProgress'),
+    btnOpenCase: $('btnOpenCase'),
+    tabBullets: $('tabBullets'),
+    tabWeapons: $('tabWeapons'),
+    caseModal: $('caseModal'),
+    casePreview: $('casePreview'),
+    caseName: $('caseName'),
+    caseRarity: $('caseRarity'),
+    caseSub: $('caseSub'),
+    btnCaseTake: $('btnCaseTake'),
+    stick: $('stick'),
+    stickBase: $('stickBase'),
+    stickKnob: $('stickKnob'),
+    stickLabel: $('stickLabel'),
     dailyDate: $('dailyDate'),
     dailyLevel: $('dailyLevel'),
+    dailyBiome: $('dailyBiome'),
     dailyCountdown: $('dailyCountdown'),
     dailyStats: $('dailyStats'),
     resultBadge: $('resultBadge'),
@@ -523,7 +617,7 @@
   // =========================================================
   const SCREEN_IDS = {
     menu: 'screen-menu', levels: 'screen-levels', daily: 'screen-daily',
-    records: 'screen-records', settings: 'screen-settings',
+    records: 'screen-records', skins: 'screen-skins', settings: 'screen-settings',
     pause: 'screen-pause', result: 'screen-result'
   };
 
@@ -562,6 +656,10 @@
     clock: 0,
     fx: { particles: [], rings: [], shake: 0, flash: 0, flashColor: COLORS.enemy, slow: 0, slowTarget: 0 },
     keys: { left: false, right: false, fast: false, slow: false },
+    stick: { x: 0, y: 0, active: false },
+    mouse: { x: 0, y: 0, movedAt: 0 },
+    skinsTab: 'bullets',
+    caseOpen: false,
     session: null,
     result: null,
     timers: [],
@@ -681,6 +779,7 @@
     Game.fx.flash = 0.3;
     Game.fx.flashColor = COLORS.mech;
     Game.keys.left = Game.keys.right = Game.keys.fast = Game.keys.slow = false;
+    resetStick();
 
     Game.mode = 'playing';
     hideScreens();
@@ -728,6 +827,7 @@
     if (mech.indexOf('patrol') !== -1 || mech.indexOf('orbit') !== -1) tips.push('hint.patrol');
     if (lvl.index >= 15 && lvl.energyMax < 500) tips.push('hint.energy');
     if (lvl.maxBounces <= 4) tips.push('hint.ricochets');
+    if (isTouchDevice() && lvl.index <= 3) tips.push('hint.stick');
 
     for (let i = 0; i < tips.length; i++) {
       const key = tips[i];
@@ -747,11 +847,13 @@
     if (Game.state.status !== 'aiming') return;
 
     Audio.unlock();
-    Audio.sfx('fire');
+    const weapon = currentWeaponSkin();
+    Audio.sfx('fire_' + (weapon ? weapon.sound : 'pistol'));
     if (!OB.fire(Game.state, Game.aim)) return;
 
     Game.session.shots++;
     Game.recoil = 1;
+    Game.mouse.movedAt = 0;
     save.attempts++;
     if (Game.session.daily) save.daily.attempts = (save.daily.attempts || 0) + 1;
     persist();
@@ -784,11 +886,15 @@
     const st = Game.state;
     const lvl = Game.level;
     const score = computeScore(st, lvl, Game.session);
+    const coinReward = 25 + st.bullet.bounces * 5 +
+      (Game.session.shots === 1 ? 12 : 0) +
+      (Game.session.daily ? 35 : 0);
 
     save.wins++;
     save.streak++;
     save.bestStreak = Math.max(save.bestStreak, save.streak);
     save.totalBounces += st.bullet.bounces;
+    save.coins += coinReward;
 
     let record = false;
     if (!Game.session.daily) {
@@ -815,7 +921,8 @@
     Game.result = {
       win: true, daily: Game.session.daily, score: score, record: record,
       bounces: st.bullet.bounces, energy: Math.max(0, Math.round(st.energy)),
-      time: st.t, shots: Game.session.shots, index: lvl.index
+      time: st.t, shots: Game.session.shots, index: lvl.index,
+      coins: coinReward
     };
 
     checkAchievements(true, {
@@ -825,14 +932,20 @@
     persist(true);
 
     Audio.sfx('win');
-    burst(st.bullet.x, st.bullet.y, COLORS.mech, 42, 340);
-    Game.fx.rings.push({ x: st.bullet.x, y: st.bullet.y, r: 6, max: 190, color: COLORS.mech, life: 1 });
+    const theme = currentBulletSkin();
+    const winColor = theme ? theme.glow : COLORS.mech;
+    burst(st.bullet.x, st.bullet.y, winColor, 42, 340);
+    if (theme) burst(st.bullet.x, st.bullet.y, theme.trail2, 24, 260);
+    Game.fx.rings.push({ x: st.bullet.x, y: st.bullet.y, r: 6, max: 190, color: winColor, life: 1 });
     Game.fx.flash = 0.5;
-    Game.fx.flashColor = COLORS.mech;
+    Game.fx.flashColor = winColor;
     Game.mode = 'result';
     if (Yandex) Yandex.gameplayStop();
 
     later(function () { showResult(true); }, 520);
+    if (save.wins === 1) {
+      later(function () { toast(t('hint.skins'), 3800); }, 1100);
+    }
   }
 
   function onLose() {
@@ -868,6 +981,7 @@
     if (Game.mode !== 'playing') return;
     Game.mode = 'paused';
     Game.keys.left = Game.keys.right = Game.keys.fast = Game.keys.slow = false;
+    resetStick();
     showScreen('pause');
     if (Yandex) Yandex.gameplayStop();
   }
@@ -887,6 +1001,9 @@
     Game.level = null;
     Game.session = null;
     Game.result = null;
+    resetStick();
+    Game.caseOpen = false;
+    if (dom.caseModal) dom.caseModal.classList.add('hidden');
     hideScreens();
     dom.hud.classList.add('hidden');
     if (dom.touch) dom.touch.classList.add('hidden');
@@ -943,11 +1060,19 @@
   function spawnMuzzle() {
     if (!Game.state || !Game.level) return;
     const p = Game.level.player;
-    // Вспышка у дула пистолета, а не в центре стикмена
-    const mx = p.x + Math.cos(Game.aim) * 22;
-    const my = p.y + Math.sin(Game.aim) * 22;
-    burst(mx, my, COLORS.accent, 14, 190);
-    Game.fx.rings.push({ x: mx, y: my, r: 4, max: 38, color: COLORS.accent, life: 1 });
+    const skin = currentBulletSkin();
+    const weapon = currentWeaponSkin();
+    const color = skin ? skin.muzzle : COLORS.accent;
+    const s = Art ? Art.stickmanScale(p.r || 17) : 0.75;
+    const flashX = (Art && Art.gunArt && weapon && Art.gunArt[weapon.id] && Art.gunArt[weapon.id].flash)
+      ? Art.gunArt[weapon.id].flash[0]
+      : 18;
+    const dist = (12.5 + flashX) * s;
+    // Вспышка у дула выбранного оружия
+    const mx = p.x + Math.cos(Game.aim) * dist;
+    const my = p.y + Math.sin(Game.aim) * dist;
+    burst(mx, my, color, 14, 190);
+    Game.fx.rings.push({ x: mx, y: my, r: 4, max: 38, color: color, life: 1 });
   }
 
   function updateFx(dt) {
@@ -979,10 +1104,43 @@
   // Игровой цикл и события
   // =========================================================
   function steeringInput() {
-    return {
-      turn: (Game.keys.right ? 1 : 0) - (Game.keys.left ? 1 : 0),
-      thrust: (Game.keys.fast ? 1 : 0) - (Game.keys.slow ? 1 : 0)
-    };
+    const j = Game.stick;
+    let turn = (Game.keys.right ? 1 : 0) - (Game.keys.left ? 1 : 0);
+    let thrust = (Game.keys.fast ? 1 : 0) - (Game.keys.slow ? 1 : 0);
+
+    // Аналоговый джойстик
+    if (j && j.active) {
+      turn += j.x;
+      thrust += -j.y;
+    }
+
+    // Мышь: если игрок только что двинул курсором в полёте,
+    // пуля плавно доворачивает к нему (тратит энергию как обычное руление)
+    if (Game.state && Game.state.status === 'flying' && Game.mouse.movedAt &&
+        (performance.now() - Game.mouse.movedAt) < 320) {
+      const b = Game.state.bullet;
+      const dx = Game.mouse.x - b.x;
+      const dy = Game.mouse.y - b.y;
+      if (Math.hypot(dx, dy) > 6) {
+        const desired = Math.atan2(dy, dx);
+        let diff = desired - b.angle;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        turn += Math.max(-1, Math.min(1, diff * 2.4));
+      }
+    }
+
+    turn = Math.max(-1, Math.min(1, turn));
+    thrust = Math.max(-1, Math.min(1, thrust));
+    return { turn: turn, thrust: thrust };
+  }
+
+  function resetStick() {
+    Game.stick.x = 0;
+    Game.stick.y = 0;
+    Game.stick.active = false;
+    if (dom.stickKnob) dom.stickKnob.style.transform = 'translate(-50%, -50%)';
+    if (dom.stick) dom.stick.classList.remove('steering');
   }
 
   function update(dt) {
@@ -1020,9 +1178,11 @@
     const events = st.events;
     for (let i = 0; i < events.length; i++) {
       const e = events[i];
+      const skin = currentBulletSkin();
+      const spark = skin ? skin.spark[Math.abs(i + (e.bounces || 0)) % skin.spark.length] : COLORS.accent;
       if (e.type === 'bounce') {
-        burst(e.x, e.y, e.kind === 'bouncy' ? COLORS.accent : '#9AA7BF', e.kind === 'bouncy' ? 12 : 7, 170);
-        Game.fx.rings.push({ x: e.x, y: e.y, r: 3, max: 30, color: COLORS.accent, life: 1 });
+        burst(e.x, e.y, e.kind === 'bouncy' ? COLORS.accent : spark, e.kind === 'bouncy' ? 12 : 7, 170);
+        Game.fx.rings.push({ x: e.x, y: e.y, r: 3, max: 30, color: e.kind === 'bouncy' ? COLORS.accent : spark, life: 1 });
         Game.fx.shake = Math.max(Game.fx.shake, 0.16);
         if (e.kind === 'bouncy') Audio.sfx('bouncy');
         else if (e.kind === 'soft') Audio.sfx('soft');
@@ -1032,7 +1192,9 @@
         Audio.sfx('break');
       } else if (e.type === 'kill') {
         burst(e.x, e.y, COLORS.enemy, 26, 290);
+        burst(e.x, e.y, spark, 18, 240);
         Game.fx.rings.push({ x: e.x, y: e.y, r: 6, max: 80, color: COLORS.enemy, life: 1 });
+        Game.fx.rings.push({ x: e.x, y: e.y, r: 4, max: 54, color: spark, life: 1 });
         Game.fx.shake = Math.max(Game.fx.shake, 0.45);
         Audio.sfx('kill');
       } else if (e.type === 'switch') {
@@ -1043,10 +1205,11 @@
         Audio.sfx('door');
       } else if (e.type === 'portal') {
         Game.fx.rings.push({ x: e.x, y: e.y, r: 8, max: 60, color: COLORS.mech, life: 1 });
-        Game.fx.rings.push({ x: e.toX, y: e.toY, r: 8, max: 60, color: COLORS.accent, life: 1 });
+        Game.fx.rings.push({ x: e.toX, y: e.toY, r: 8, max: 60, color: spark, life: 1 });
         Audio.sfx('portal');
       } else if (e.type === 'absorb') {
         burst(e.x, e.y, COLORS.enemy, 20, 220);
+        burst(e.x, e.y, spark, 10, 160);
       }
     }
     events.length = 0;
@@ -1055,7 +1218,7 @@
   // =========================================================
   // HUD
   // =========================================================
-  const hudCache = { level: '', bounces: '', enemies: '', energy: '', fire: '' };
+  const hudCache = { level: '', bounces: '', enemies: '', energy: '', fire: '', stick: '' };
 
   function updateHUD() {
     const st = Game.state, lvl = Game.level;
@@ -1100,6 +1263,16 @@
       dom.btnFire.disabled = !canFire;
       hudCache.fire = String(canFire);
     }
+
+    // Подпись джойстика: прицел → ведение пули
+    if (dom.stickLabel) {
+      const label = st.status === 'aiming' ? t('hud.aim') : t('hud.steer');
+      if (label !== hudCache.stick) {
+        dom.stickLabel.textContent = label;
+        hudCache.stick = label;
+      }
+    }
+    if (dom.stick) dom.stick.classList.toggle('steering', st.status === 'flying');
   }
 
   function recomputePreview() {
@@ -1142,6 +1315,7 @@
 
     const cards = [];
     if (win) cards.push(statCard(r.score, t('result.score')));
+    if (win && r.coins) cards.push(statCard('+' + r.coins + ' 🪙', t('result.coins')));
     cards.push(statCard(r.bounces || 0, t('result.bounces')));
     if (win) cards.push(statCard(r.energy, t('result.energy')));
     if (win) cards.push(statCard((r.time || 0).toFixed(1) + 's', t('result.time')));
@@ -1168,6 +1342,7 @@
     dom.menuStats.textContent = t('menu.progress', {
       n: level, w: Math.max(0, save.maxCleared + 1), s: save.bestStreak
     });
+    updateCoinUI();
   }
 
   function openLevels(page) {
@@ -1230,6 +1405,276 @@
     }).join('');
   }
 
+  // =========================================================
+  // Скины, кейс и монеты
+  // =========================================================
+  function currentBulletSkin() {
+    return Skins ? Skins.bullet(save.bulletSkin) : null;
+  }
+
+  function currentWeaponSkin() {
+    return Skins ? Skins.weapon(save.weaponSkin) : null;
+  }
+
+  function updateCoinUI() {
+    const text = '🪙 ' + save.coins;
+    if (dom.menuCoins) dom.menuCoins.textContent = text;
+    if (dom.skinsCoins) dom.skinsCoins.textContent = text;
+  }
+
+  function ownedCount(list, map) {
+    let n = 0;
+    for (let i = 0; i < list.length; i++) if (map && map[list[i].id]) n++;
+    return n;
+  }
+
+  function drawSkinPreview(canvas, type, item) {
+    if (!canvas || !item) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    if (type === 'bullet') {
+      const k = w / 180;
+      ctx.save();
+      ctx.globalAlpha = 0.35;
+      ctx.strokeStyle = item.trail;
+      ctx.lineWidth = 5 * k;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(16 * k, h * 0.55);
+      ctx.lineTo(w - 52 * k, h * 0.55);
+      ctx.stroke();
+      ctx.globalAlpha = 0.75;
+      ctx.strokeStyle = item.trail2;
+      ctx.lineWidth = 1.6 * k;
+      ctx.beginPath();
+      ctx.moveTo(20 * k, h * 0.55);
+      ctx.lineTo(w - 54 * k, h * 0.55);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      if (Art) Art.drawBulletHead(ctx, w - 44 * k, h * 0.55, item, 0, 11 * k);
+      ctx.restore();
+    } else if (Art) {
+      const k = w / 180;
+      ctx.save();
+      ctx.translate(20 * k, h * 0.72);
+      ctx.rotate(-0.1);
+      ctx.scale(2.7 * k, 2.7 * k);
+      Art.drawWeapon(ctx, 1, item.id, '#1A1F28', 0, item.accent);
+      ctx.restore();
+    }
+  }
+
+  function drawCasePreview(result) {
+    const canvas = dom.casePreview;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const w = canvas.width, h = canvas.height;
+    const k = w / 360;
+    ctx.clearRect(0, 0, w, h);
+
+    if (result.type === 'coins') {
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = '#C99712';
+        ctx.beginPath();
+        ctx.ellipse(w / 2 + (i * 12 - 12) * k, h / 2 + (10 - i * 16) * k, 34 * k, 13 * k, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#FFD84D';
+        ctx.beginPath();
+        ctx.ellipse(w / 2 + (i * 12 - 12) * k, h / 2 + (4 - i * 16) * k, 34 * k, 13 * k, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#7A5A08';
+      ctx.font = '700 ' + Math.round(18 * k) + 'px "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('+' + result.amount, w / 2, h / 2 - 4 * k);
+      return;
+    }
+
+    if (result.type === 'bullet') {
+      ctx.save();
+      ctx.globalAlpha = 0.35;
+      ctx.strokeStyle = result.item.trail;
+      ctx.lineWidth = 10 * k;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(36 * k, h / 2);
+      ctx.lineTo(w / 2 + 44 * k, h / 2);
+      ctx.stroke();
+      ctx.globalAlpha = 0.8;
+      ctx.strokeStyle = result.item.trail2;
+      ctx.lineWidth = 2.4 * k;
+      ctx.beginPath();
+      ctx.moveTo(36 * k, h / 2);
+      ctx.lineTo(w / 2 + 44 * k, h / 2);
+      ctx.stroke();
+      ctx.restore();
+      if (Art) Art.drawBulletHead(ctx, w / 2 + 64 * k, h / 2, result.item, 0, 18 * k);
+    } else if (Art) {
+      ctx.save();
+      ctx.translate(w / 2 - 110 * k, h * 0.7);
+      ctx.scale(5 * k, 5 * k);
+      Art.drawWeapon(ctx, 1, result.item.id, '#1A1F28', 0.55, result.item.accent);
+      ctx.restore();
+    }
+  }
+
+
+  function showCaseResult(result) {
+    Game.caseOpen = true;
+    const modal = dom.caseModal;
+    if (!modal) return;
+    const isCoins = result.type === 'coins';
+    const rarityColor = isCoins ? '#FFD84D' : Skins.rarity(result.rarity).color;
+
+    if (dom.caseRarity) {
+      dom.caseRarity.textContent = isCoins
+        ? t('skins.coinsPrize')
+        : Skins.rarityName(result.rarity, lang);
+      dom.caseRarity.style.color = rarityColor;
+      dom.caseRarity.style.borderColor = rarityColor;
+    }
+    if (dom.caseName) {
+      dom.caseName.textContent = isCoins
+        ? '+' + result.amount + ' 🪙'
+        : (lang === 'en' ? result.item.en : result.item.ru);
+    }
+    if (dom.caseSub) {
+      dom.caseSub.textContent = isCoins
+        ? t('skins.allOwned')
+        : t('skins.newItem') + ' · ' + t(result.type === 'bullet' ? 'skins.bullets' : 'skins.weapons');
+    }
+    drawCasePreview(result);
+
+    modal.classList.remove('hidden');
+    modal.classList.remove('show');
+    if (typeof modal.offsetWidth === 'number') void modal.offsetWidth;
+    modal.classList.add('show');
+    if (dom.btnOpenCase) dom.btnOpenCase.disabled = true;
+  }
+
+  function hideCaseResult() {
+    Game.caseOpen = false;
+    if (dom.caseModal) {
+      dom.caseModal.classList.add('hidden');
+      dom.caseModal.classList.remove('show');
+    }
+    if (dom.btnOpenCase) dom.btnOpenCase.disabled = false;
+    renderSkins();
+    updateCoinUI();
+    Audio.sfx('click');
+  }
+
+  function openCase() {
+    if (!Skins || Game.caseOpen) return;
+    if (ownedCount(Skins.bullets, save.ownedBullets) + ownedCount(Skins.weapons, save.ownedWeapons) >=
+        Skins.bullets.length + Skins.weapons.length) {
+      toast(t('skins.allOwned'));
+      return;
+    }
+    if (save.coins < Skins.CASE_COST) {
+      toast(t('skins.noCoins', { n: Skins.CASE_COST }));
+      Audio.sfx('lose');
+      return;
+    }
+    save.coins -= Skins.CASE_COST;
+    save.casesOpened = (save.casesOpened || 0) + 1;
+    const result = Skins.roll(save, Math.random);
+    if (result.type === 'coins') {
+      save.coins += result.amount;
+    } else if (result.type === 'bullet') {
+      save.ownedBullets[result.id] = 1;
+    } else {
+      save.ownedWeapons[result.id] = 1;
+    }
+    persist(true);
+    updateCoinUI();
+    Audio.sfx('case');
+    showCaseResult(result);
+  }
+
+  function equipSkin(type, id) {
+    if (!Skins.isOwned(save, type, id)) {
+      toast(t('skins.lockedToast'));
+      return;
+    }
+    if (type === 'bullet') save.bulletSkin = id;
+    else save.weaponSkin = id;
+    persist(true);
+    renderSkins();
+    updateCoinUI();
+    Audio.sfx('switch');
+    const item = type === 'bullet' ? Skins.bullet(id) : Skins.weapon(id);
+    toast(t('skins.equipToast', { name: lang === 'en' ? item.en : item.ru }), 1600);
+  }
+
+  function renderSkins() {
+    if (!dom.skinGrid || !Skins) return;
+    const bullets = Skins.bullets;
+    const weapons = Skins.weapons;
+    const total = bullets.length + weapons.length;
+    const owned = ownedCount(bullets, save.ownedBullets) + ownedCount(weapons, save.ownedWeapons);
+
+    if (dom.skinProgress) {
+      dom.skinProgress.textContent = t('skins.progress', { n: owned, total: total });
+    }
+    if (dom.btnOpenCase) {
+      dom.btnOpenCase.textContent = owned >= total
+        ? t('skins.allOwned')
+        : t('skins.open', { n: Skins.CASE_COST });
+      dom.btnOpenCase.disabled = owned >= total || save.coins < Skins.CASE_COST;
+    }
+    if (dom.tabBullets) dom.tabBullets.classList.toggle('primary', Game.skinsTab === 'bullets');
+    if (dom.tabWeapons) dom.tabWeapons.classList.toggle('primary', Game.skinsTab === 'weapons');
+
+    const list = Game.skinsTab === 'weapons' ? weapons : bullets;
+    const type = Game.skinsTab === 'weapons' ? 'weapon' : 'bullet';
+    const ownedMap = type === 'weapon' ? save.ownedWeapons : save.ownedBullets;
+    const equipped = type === 'weapon' ? save.weaponSkin : save.bulletSkin;
+
+    let html = '';
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      const isOwned = !!ownedMap[item.id];
+      const isEquipped = equipped === item.id;
+      const r = Skins.rarity(item.rarity);
+      html += '<button class="skin-card rarity-' + item.rarity +
+        (isOwned ? ' owned' : ' locked') + (isEquipped ? ' equipped' : '') + '"' +
+        ' data-type="' + type + '" data-id="' + item.id + '"' +
+        ' style="--rarity:' + r.color + '">' +
+        '<span class="skin-rarity-tag">' + Skins.rarityName(item.rarity, lang) + '</span>' +
+        '<canvas class="skin-preview" width="320" height="180" data-type="' + type +
+        '" data-id="' + item.id + '"></canvas>' +
+        '<span class="skin-name">' + (lang === 'en' ? item.en : item.ru) + '</span>' +
+        '<span class="skin-state">' +
+        (isEquipped ? t('skins.equipped') : (isOwned ? t('skins.equip') : '🔒 ' + t('skins.locked'))) +
+        '</span></button>';
+    }
+    dom.skinGrid.innerHTML = html;
+    updateCoinUI();
+
+    const canvases = document.querySelectorAll('#skinGrid .skin-preview');
+    for (let i = 0; i < canvases.length; i++) {
+      const c = canvases[i];
+      const tType = c.getAttribute('data-type');
+      const id = c.getAttribute('data-id');
+      drawSkinPreview(c, tType, tType === 'weapon' ? Skins.weapon(id) : Skins.bullet(id));
+    }
+  }
+
+  function openSkins(tab) {
+    if (tab === 'bullets' || tab === 'weapons') Game.skinsTab = tab;
+    renderSkins();
+    updateCoinUI();
+    showScreen('skins');
+    Audio.sfx('click');
+  }
+
+
   function countdownText() {
     const now = new Date();
     const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0);
@@ -1257,8 +1702,12 @@
     const dailyBiome = Biomes
       ? Biomes.forLevel(dailyIndex(), dailySeed())
       : null;
-    dom.dailyLevel.textContent = 'ARENA ' + (dailyIndex() + 1) +
-      (dailyBiome ? ' · ' + dailyBiome.icon + ' ' + Biomes.name(dailyBiome, lang) : '');
+    dom.dailyLevel.textContent = 'ARENA ' + (dailyIndex() + 1);
+    if (dom.dailyBiome) {
+      dom.dailyBiome.textContent = dailyBiome
+        ? dailyBiome.icon + ' ' + Biomes.name(dailyBiome, lang)
+        : '';
+    }
     dom.dailyCountdown.textContent = countdownText();
     dom.dailyStats.innerHTML = [
       statCard(save.daily.bestAttempts || '—', t('daily.best')),
@@ -1300,9 +1749,11 @@
     refreshMenu();
     if (Game.screen === 'records') renderRecords();
     if (Game.screen === 'daily') renderDaily();
+    if (Game.screen === 'skins') renderSkins();
     if (Game.screen === 'levels') {
       renderLevels(Math.max(1, Math.ceil((save.maxCleared + 2) / PER_PAGE)));
     }
+    updateCoinUI();
     dom.btnLangRu.classList.toggle('primary', lang === 'ru');
     dom.btnLangEn.classList.toggle('primary', lang === 'en');
     if (Game.state) updateHUD();
@@ -1578,10 +2029,13 @@
   function drawPlayer(timeSec) {
     const lvl = Game.level, st = Game.state;
     if (!lvl || !st || !Art || !Game.biome) return;
+    const wp = currentWeaponSkin();
     Art.drawPlayer(ctx, lvl, Game.aim, timeSec, {
       biome: Game.biome,
       aiming: st.status === 'aiming',
-      recoil: Game.recoil
+      recoil: Game.recoil,
+      weapon: wp ? wp.id : 'pistol',
+      weaponAccent: wp ? wp.accent : '#FF6B35'
     });
   }
 
@@ -1591,6 +2045,9 @@
     if (!st || st.status !== 'aiming' || !Game.preview || !Game.preview.points) return;
     const pts = Game.preview.points;
     if (pts.length < 2) return;
+    const skin = currentBulletSkin();
+    const accent = skin ? skin.glow : '#FF8A46';
+    const light = skin ? skin.trail2 : '#FFFFFF';
 
     ctx.save();
 
@@ -1612,15 +2069,19 @@
 
     ctx.setLineDash([6, 7]);
     tracePath('rgba(8,18,10,0.32)', 3.6);
-    tracePath('rgba(255,255,255,0.6)', 1.5);
+    ctx.globalAlpha = 0.68;
+    tracePath(light, 1.5);
+    ctx.globalAlpha = 1;
     ctx.setLineDash([]);
 
     for (let i = 2; i < pts.length; i += 3) {
-      ctx.fillStyle = 'rgba(255,107,53,0.6)';
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 0.6;
       ctx.beginPath();
       ctx.arc(pts[i].x, pts[i].y, 1.9, 0, Math.PI * 2);
       ctx.fill();
     }
+    ctx.globalAlpha = 1;
 
     const b = Game.preview.bounces || [];
     for (let i = 0; i < b.length; i++) {
@@ -1629,7 +2090,7 @@
       ctx.beginPath();
       ctx.arc(b[i].x, b[i].y, 7, 0, Math.PI * 2);
       ctx.stroke();
-      ctx.strokeStyle = 'rgba(255,138,70,0.95)';
+      ctx.strokeStyle = accent;
       ctx.lineWidth = 1.8;
       ctx.beginPath();
       ctx.arc(b[i].x, b[i].y, 7, 0, Math.PI * 2);
@@ -1645,61 +2106,144 @@
     ctx.moveTo(p.x, p.y);
     ctx.lineTo(ax, ay);
     ctx.stroke();
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.strokeStyle = light;
+    ctx.globalAlpha = 0.3;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
     ctx.lineTo(ax, ay);
     ctx.stroke();
+    ctx.globalAlpha = 1;
     ctx.restore();
   }
 
-  function drawBullet() {
+  function drawBullet(timeSec) {
     const st = Game.state;
     if (!st) return;
     const b = st.bullet;
     if (!b.active) return;
 
-    // Тёмная подложка трассера — пуля видна и на снегу, и на песке
-    for (let i = 1; i < b.trail.length; i++) {
-      const a = i / b.trail.length;
-      ctx.strokeStyle = 'rgba(20,12,6,' + (a * 0.18).toFixed(3) + ')';
+    const skin = currentBulletSkin();
+    const trail = b.trail;
+    const n = trail.length;
+
+    for (let i = 1; i < n; i++) {
+      const a = i / n;
+      ctx.strokeStyle = 'rgba(18,12,8,' + (a * 0.2).toFixed(3) + ')';
       ctx.lineWidth = 3 + a * 3.6;
       ctx.beginPath();
-      ctx.moveTo(b.trail[i - 1].x, b.trail[i - 1].y);
-      ctx.lineTo(b.trail[i].x, b.trail[i].y);
+      ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+      ctx.lineTo(trail[i].x, trail[i].y);
       ctx.stroke();
     }
 
-    for (let i = 1; i < b.trail.length; i++) {
-      const a = i / b.trail.length;
-      ctx.strokeStyle = 'rgba(255,107,53,' + (a * 0.55).toFixed(3) + ')';
-      ctx.lineWidth = 1 + a * 3.4;
-      ctx.beginPath();
-      ctx.moveTo(b.trail[i - 1].x, b.trail[i - 1].y);
-      ctx.lineTo(b.trail[i].x, b.trail[i].y);
-      ctx.stroke();
+    if (skin) {
+      const style = skin.trailStyle || 'comet';
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      if (style === 'dotted') {
+        for (let i = 2; i < n; i += 2) {
+          const a = i / n;
+          ctx.globalAlpha = a * 0.8;
+          ctx.fillStyle = skin.trail;
+          ctx.beginPath(); ctx.arc(trail[i].x, trail[i].y, 1.2 + a * 2.6, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = skin.trail2;
+          ctx.beginPath(); ctx.arc(trail[i].x, trail[i].y, 0.6 + a * 1.1, 0, Math.PI * 2); ctx.fill();
+        }
+      } else if (style === 'spark') {
+        for (let i = 1; i < n; i++) {
+          const a = i / n;
+          ctx.globalAlpha = a * 0.55;
+          ctx.strokeStyle = skin.trail;
+          ctx.lineWidth = 0.8 + a * 1.8;
+          ctx.beginPath(); ctx.moveTo(trail[i - 1].x, trail[i - 1].y); ctx.lineTo(trail[i].x, trail[i].y); ctx.stroke();
+        }
+        for (let i = 2; i < n; i += 3) {
+          const a = i / n;
+          ctx.globalAlpha = a * 0.9;
+          ctx.fillStyle = skin.spark[i % skin.spark.length];
+          ctx.fillRect(trail[i].x + (i % 5) - 2, trail[i].y + (i % 3) - 1, 1.6 + a * 2.4, 1.6 + a * 2.4);
+        }
+      } else if (style === 'wave') {
+        for (let i = 1; i < n; i++) {
+          const a = i / n;
+          const dx = trail[i].x - trail[i - 1].x, dy = trail[i].y - trail[i - 1].y;
+          const len = Math.hypot(dx, dy) || 1;
+          const off = Math.sin(i * 0.55 + timeSec * 7) * 2.4 * a;
+          const ox = (-dy / len) * off, oy = (dx / len) * off;
+          ctx.globalAlpha = a * 0.8;
+          ctx.strokeStyle = i % 2 ? skin.trail : skin.trail2;
+          ctx.lineWidth = 1.4 + a * 2.8;
+          ctx.beginPath(); ctx.moveTo(trail[i - 1].x + ox, trail[i - 1].y + oy); ctx.lineTo(trail[i].x + ox, trail[i].y + oy); ctx.stroke();
+        }
+      } else if (style === 'plasma') {
+        for (let i = 1; i < n; i++) {
+          const a = i / n;
+          const dx = trail[i].x - trail[i - 1].x, dy = trail[i].y - trail[i - 1].y;
+          const len = Math.hypot(dx, dy) || 1;
+          const off = 2.2 + Math.sin(i * 0.7 + timeSec * 10) * 1.2;
+          const ox = (-dy / len) * off, oy = (dx / len) * off;
+          ctx.globalAlpha = a * 0.75;
+          ctx.strokeStyle = skin.trail;
+          ctx.lineWidth = 1.2 + a * 2.4;
+          ctx.beginPath(); ctx.moveTo(trail[i - 1].x + ox, trail[i - 1].y + oy); ctx.lineTo(trail[i].x + ox, trail[i].y + oy); ctx.stroke();
+          ctx.strokeStyle = skin.trail2;
+          ctx.beginPath(); ctx.moveTo(trail[i - 1].x - ox, trail[i - 1].y - oy); ctx.lineTo(trail[i].x - ox, trail[i].y - oy); ctx.stroke();
+        }
+      } else if (style === 'rainbow') {
+        for (let i = 1; i < n; i++) {
+          const a = i / n;
+          ctx.globalAlpha = a * 0.75;
+          ctx.strokeStyle = 'hsl(' + Math.round((i * 9 + timeSec * 120) % 360) + ',100%,62%)';
+          ctx.lineWidth = 1.2 + a * 3.2;
+          ctx.beginPath(); ctx.moveTo(trail[i - 1].x, trail[i - 1].y); ctx.lineTo(trail[i].x, trail[i].y); ctx.stroke();
+        }
+      } else if (style === 'galaxy') {
+        for (let i = 1; i < n; i++) {
+          const a = i / n;
+          ctx.globalAlpha = a * 0.55;
+          ctx.strokeStyle = skin.trail;
+          ctx.lineWidth = 0.8 + a * 2.2;
+          ctx.beginPath(); ctx.moveTo(trail[i - 1].x, trail[i - 1].y); ctx.lineTo(trail[i].x, trail[i].y); ctx.stroke();
+        }
+        for (let i = 3; i < n; i += 4) {
+          const a = i / n;
+          ctx.globalAlpha = a * 0.9;
+          ctx.fillStyle = skin.spark[i % skin.spark.length];
+          const sz = 1 + a * 2.2;
+          ctx.fillRect(trail[i].x - sz / 2, trail[i].y - sz / 2, sz, sz);
+        }
+      } else {
+        for (let i = 1; i < n; i++) {
+          const a = i / n;
+          ctx.globalAlpha = a * 0.7;
+          ctx.strokeStyle = a > 0.72 ? skin.trail2 : skin.trail;
+          ctx.lineWidth = 1 + a * 3.6;
+          ctx.beginPath(); ctx.moveTo(trail[i - 1].x, trail[i - 1].y); ctx.lineTo(trail[i].x, trail[i].y); ctx.stroke();
+        }
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+    } else {
+      for (let i = 1; i < n; i++) {
+        const a = i / n;
+        ctx.strokeStyle = 'rgba(255,107,53,' + (a * 0.55).toFixed(3) + ')';
+        ctx.lineWidth = 1 + a * 3.4;
+        ctx.beginPath(); ctx.moveTo(trail[i - 1].x, trail[i - 1].y); ctx.lineTo(trail[i].x, trail[i].y); ctx.stroke();
+      }
     }
 
     if (st.status !== 'flying' && st.status !== 'win') return;
 
-    ctx.save();
-    ctx.fillStyle = 'rgba(24,14,6,0.42)';
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, OB.BULLET_R + 2.6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowColor = COLORS.bullet;
-    ctx.shadowBlur = 22;
-    ctx.fillStyle = COLORS.bullet;
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, OB.BULLET_R, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = 'rgba(255,107,53,0.5)';
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, OB.BULLET_R + 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    if (skin && Art) {
+      Art.drawBulletHead(ctx, b.x, b.y, skin, timeSec, OB.BULLET_R);
+    } else {
+      ctx.save();
+      ctx.fillStyle = COLORS.bullet;
+      ctx.beginPath(); ctx.arc(b.x, b.y, OB.BULLET_R, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
   }
 
   function drawParticles() {
@@ -1740,6 +2284,34 @@
     ctx.restore();
   }
 
+  function drawFlightCursor() {
+    const st = Game.state;
+    if (!st || st.status !== 'flying' || !Game.mouse.movedAt) return;
+    const age = performance.now() - Game.mouse.movedAt;
+    if (age < 0 || age > 320) return;
+    const skin = currentBulletSkin();
+    const color = skin ? skin.glow : '#7CF3FF';
+    const a = Math.max(0, 1 - age / 320);
+    ctx.save();
+    ctx.globalAlpha = a * 0.65;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(Game.mouse.x, Game.mouse.y, 9, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(Game.mouse.x - 14, Game.mouse.y);
+    ctx.lineTo(Game.mouse.x - 5, Game.mouse.y);
+    ctx.moveTo(Game.mouse.x + 5, Game.mouse.y);
+    ctx.lineTo(Game.mouse.x + 14, Game.mouse.y);
+    ctx.moveTo(Game.mouse.x, Game.mouse.y - 14);
+    ctx.lineTo(Game.mouse.x, Game.mouse.y - 5);
+    ctx.moveTo(Game.mouse.x, Game.mouse.y + 5);
+    ctx.lineTo(Game.mouse.x, Game.mouse.y + 14);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   function render(timeSec) {
     if (!bgCanvas) buildBackground();
     ctx.setTransform(view.dpr * view.scale, 0, 0, view.dpr * view.scale, 0, 0);
@@ -1758,8 +2330,9 @@
       drawPortals(timeSec);
       drawEnemies(timeSec);
       drawAimPreview();
-      drawBullet();
+      drawBullet(timeSec);
       drawPlayer(timeSec);
+      drawFlightCursor();
       drawParticles();
       if (Art && Game.biome) {
         Art.drawWeather(ctx, Game.biome, timeSec, {
@@ -1823,6 +2396,13 @@
     }, { passive: false });
 
     dom.canvas.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'mouse') {
+        const pt = toWorld(e.clientX, e.clientY);
+        const moved = Math.hypot(pt.x - Game.mouse.x, pt.y - Game.mouse.y) > 1.5;
+        Game.mouse.x = pt.x;
+        Game.mouse.y = pt.y;
+        if (moved) Game.mouse.movedAt = performance.now();
+      }
       if (e.pointerType === 'mouse' || pointerDown) aimAt(e.clientX, e.clientY);
     });
 
@@ -1874,23 +2454,7 @@
     });
 
     // экранные кнопки удержания
-    document.querySelectorAll('[data-hold]').forEach(function (btn) {
-      const key = btn.getAttribute('data-hold');
-      const on = function (e) {
-        e.preventDefault();
-        Audio.unlock();
-        Game.keys[key] = true;
-        btn.classList.add('held');
-      };
-      const off = function () {
-        Game.keys[key] = false;
-        btn.classList.remove('held');
-      };
-      btn.addEventListener('pointerdown', on, { passive: false });
-      btn.addEventListener('pointerup', off);
-      btn.addEventListener('pointercancel', off);
-      btn.addEventListener('pointerleave', off);
-    });
+    // (на телефоне теперь используется аналоговый джойстик ниже)
 
     if (dom.btnFireTouch) {
       dom.btnFireTouch.addEventListener('pointerdown', function (e) {
@@ -1898,6 +2462,84 @@
         Audio.unlock();
         fire();
       }, { passive: false });
+    }
+
+    // Виртуальный джойстик: прицел до выстрела, управление пулей в полёте
+    if (dom.stickBase) {
+      let pointerId = null;
+
+      const apply = function (e) {
+        const rect = dom.stickBase.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        let dx = (e.clientX - cx) / (rect.width / 2);
+        let dy = (e.clientY - cy) / (rect.height / 2);
+        const len = Math.hypot(dx, dy);
+        if (len > 1) { dx /= len; dy /= len; }
+        const dead = 0.14;
+        const active = Math.hypot(dx, dy) >= dead;
+        Game.stick.x = active ? dx : 0;
+        Game.stick.y = active ? dy : 0;
+        Game.stick.active = active;
+
+        const max = Math.min(rect.width, rect.height) * 0.29;
+        if (dom.stickKnob) {
+          dom.stickKnob.style.transform =
+            'translate(calc(-50% + ' + (dx * max).toFixed(1) + 'px), calc(-50% + ' +
+            (dy * max).toFixed(1) + 'px))';
+        }
+
+        // До выстрела джойстик задаёт направление прицела
+        if (active && Game.state && Game.state.status === 'aiming' &&
+            Math.hypot(dx, dy) > 0.35) {
+          const nextAim = Math.atan2(dy, dx);
+          if (Math.abs(nextAim - Game.aim) > 0.001) {
+            Game.aim = nextAim;
+            recomputePreview();
+          }
+        }
+      };
+
+      const start = function (e) {
+        e.preventDefault();
+        Audio.unlock();
+        pointerId = e.pointerId;
+        if (dom.stickBase.setPointerCapture) {
+          try { dom.stickBase.setPointerCapture(pointerId); } catch (err) { /* ignore */ }
+        }
+        dom.stick.classList.add('held');
+        apply(e);
+      };
+      const move = function (e) {
+        if (pointerId == null || (e.pointerId != null && e.pointerId !== pointerId)) return;
+        e.preventDefault();
+        apply(e);
+      };
+      const end = function () {
+        pointerId = null;
+        dom.stick.classList.remove('held');
+        Game.stick.x = 0;
+        Game.stick.y = 0;
+        Game.stick.active = false;
+        if (dom.stickKnob) dom.stickKnob.style.transform = 'translate(-50%, -50%)';
+      };
+
+      dom.stickBase.addEventListener('pointerdown', start, { passive: false });
+      dom.stickBase.addEventListener('pointermove', move, { passive: false });
+      dom.stickBase.addEventListener('pointerup', end);
+      dom.stickBase.addEventListener('pointercancel', end);
+      dom.stickBase.addEventListener('pointerleave', function () {
+        if (pointerId == null) end();
+      });
+      // Отпускание пальца вне круга тоже сбрасывает управление
+      const globalEnd = function (e) {
+        if (pointerId == null) return;
+        if (e && e.pointerId != null && e.pointerId !== pointerId) return;
+        end();
+      };
+      window.addEventListener('pointerup', globalEnd);
+      window.addEventListener('pointercancel', globalEnd);
     }
 
     window.addEventListener('resize', resizeCanvas);
@@ -1930,6 +2572,29 @@
       Audio.sfx('click');
     });
     on('btnRecords', function () { renderRecords(); showScreen('records'); Audio.sfx('click'); });
+    on('btnSkins', function () { Audio.unlock(); openSkins('bullets'); });
+    on('btnSkinsBack', function () {
+      if (Game.caseOpen) { hideCaseResult(); return; }
+      showScreen('menu');
+      refreshMenu();
+      updateCoinUI();
+      Audio.sfx('click');
+    });
+    on('tabBullets', function () { Game.skinsTab = 'bullets'; renderSkins(); Audio.sfx('click'); });
+    on('tabWeapons', function () { Game.skinsTab = 'weapons'; renderSkins(); Audio.sfx('click'); });
+    on('btnOpenCase', function () { openCase(); });
+    on('btnCaseTake', function () { hideCaseResult(); });
+
+    if (dom.skinGrid) {
+      dom.skinGrid.addEventListener('click', function (e) {
+        const card = e.target.closest ? e.target.closest('.skin-card') : null;
+        if (!card) return;
+        const type = card.getAttribute('data-type');
+        const id = card.getAttribute('data-id');
+        if (!type || !id) return;
+        equipSkin(type, id);
+      });
+    }
     on('btnSettings', function () { openSettings(); });
     on('btnPauseSettings', function () { openSettings(); });
 
@@ -2000,9 +2665,11 @@
       if (!window.confirm(t('settings.resetNote'))) return;
       save = defaultSave();
       save.worldSeed = randomSeed();
+      sanitizeSkins(save);
       persist(true);
       Gen.clearCache();
       Game.prefetched = {};
+      hideCaseResult();
       closeSettings();
       refreshMenu();
       toast(t('settings.resetDone'));
@@ -2031,8 +2698,8 @@
   // =========================================================
   function mergeCloud(remote) {
     if (!remote || typeof remote !== 'object') return;
-    // Не подменяем сохранение посреди забега
-    if (Game.mode === 'playing' || Game.mode === 'paused') { persist(true); return; }
+    // Не подменяем сохранение посреди забега или открытия кейса
+    if (Game.mode === 'playing' || Game.mode === 'paused' || Game.caseOpen) { persist(true); return; }
 
     const localCleared = save.maxCleared;
     const remoteCleared = typeof remote.maxCleared === 'number' ? remote.maxCleared : -1;
@@ -2041,10 +2708,16 @@
     if (remoteCleared > localCleared || (remoteCleared === localCleared && remoteNewer)) {
       const cloud = mergeSave(remote);
       cloud.worldSeed = remote.worldSeed || save.worldSeed;
+      // Не теряем косметику, если облако старое и не знает о скинах
+      ['coins', 'ownedBullets', 'ownedWeapons', 'bulletSkin', 'weaponSkin', 'casesOpened']
+        .forEach(function (k) {
+          if (remote[k] === undefined || remote[k] === null) cloud[k] = save[k];
+        });
       save = cloud;
       persist(true);
       refreshMenu();
       if (Game.screen === 'records') renderRecords();
+      if (Game.screen === 'skins') renderSkins();
     } else if (localCleared > remoteCleared) {
       persist(true);
     }
@@ -2116,13 +2789,19 @@
 
   // Небольшой публичный API: полезен для отладки и встраивания
   window.FlexShot = {
-    version: '1.1.0',
+    version: '1.2.0',
     startLevel: startLevel,
     restartLevel: restartLevel,
     fire: fire,
     game: Game,
     biomes: Biomes,
     art: Art,
+    skins: {
+      open: openSkins,
+      openCase: openCase,
+      equip: equipSkin,
+      render: renderSkins
+    },
     getSave: function () { return save; }
   };
 

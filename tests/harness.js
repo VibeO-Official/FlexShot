@@ -201,6 +201,8 @@ function boot(opts) {
 
   load('js/engine.js');
   load('js/biomes.js');
+  load('js/enemies.js');
+  load('js/skins.js');
   load('js/generator.js');
   load('js/art.js');
   load('js/yandex.js');

@@ -217,6 +217,161 @@
       water: { base: '#3FA7C4', light: '#64C7DC', dark: '#2C7F9B' },
       fog: 'rgba(140, 220, 235, 0.05)',
       dark: false
+    },
+
+    // -------------------------------------------------------
+    // 13. Вишнёвая роща — розовые соцветия, лепестки
+    // -------------------------------------------------------
+    {
+      id: 'cherry', ru: 'ВИШНЁВАЯ РОЩА', en: 'CHERRY GROVE', icon: '🌸', tree: 'cherry',
+      accent: '#FF9EC4',
+      grass: { base: '#72C05A', light: '#86D46C', dark: '#5DA647', blade: '#FFC7DC' },
+      soil: { top: '#8A5A3A', light: '#A7744E', dark: '#5E3C24', speck: '#C99A6E' },
+      leaf: { base: '#E58AAE', light: '#FFC1D8', dark: '#C96A92', edge: '#8E3E60', accent: '#FFE3EE' },
+      log: { bark: '#5A3A32', light: '#755046', dark: '#38221E', ring: '#C59A7A', ringDark: '#7C5A46' },
+      flower: ['#FFC1D8', '#FFFFFF', '#FF9EC4'],
+      weather: { type: 'petal', color: '#FFC1D8', rate: 0.62 },
+      decor: { tuft: 0.8, flower: 0.8, pebble: 0.2, mushroom: 0.1, bush: 0.25, cactus: 0, lily: 0, shell: 0, petal: 1.5 },
+      fog: 'rgba(255, 200, 220, 0.05)',
+      petals: true, dark: false
+    },
+
+    // -------------------------------------------------------
+    // 14. Грибной остров — мицелий и гигантские грибы
+    // -------------------------------------------------------
+    {
+      id: 'mushroom', ru: 'ГРИБНОЙ ОСТРОВ', en: 'MUSHROOM ISLAND', icon: '🍄', tree: 'mushroom',
+      accent: '#D46BFF',
+      grass: { base: '#8A7AA8', light: '#A292C0', dark: '#75658F', blade: '#C9A6E8' },
+      soil: { top: '#6B5A7A', light: '#857093', dark: '#4A3C57', speck: '#A08FB8' },
+      leaf: { base: '#C04A3A', light: '#E8745C', dark: '#8E3328', edge: '#5A1E18', accent: '#FFE8D0' },
+      log: { bark: '#C9B88F', light: '#E8DCC0', dark: '#8A7A58', ring: '#F0E8D0', ringDark: '#A89870' },
+      flower: ['#D46BFF', '#FFE8D0', '#FF6B6B'],
+      weather: { type: 'spore', color: '#E0B8FF', rate: 0.52 },
+      decor: { tuft: 0.5, flower: 0.1, pebble: 0.2, mushroom: 1.3, bush: 0.2, cactus: 0, lily: 0, shell: 0 },
+      fog: 'rgba(120, 70, 150, 0.10)',
+      mycelium: true, dark: true
+    },
+
+    // -------------------------------------------------------
+    // 15. Бамбуковая роща — бамбук, вода, тёплый дождь
+    // -------------------------------------------------------
+    {
+      id: 'bamboo', ru: 'БАМБУКОВАЯ РОЩА', en: 'BAMBOO GROVE', icon: '🎋', tree: 'bamboo',
+      accent: '#A5E06A',
+      grass: { base: '#58B84C', light: '#6BCC5C', dark: '#489E3C', blade: '#A8E888' },
+      soil: { top: '#7A5A36', light: '#947048', dark: '#523A20', speck: '#B08A5A' },
+      leaf: { base: '#7FCB4A', light: '#A5E06A', dark: '#5A9E35', edge: '#376E20', accent: '#E8FF9A' },
+      log: { bark: '#C7B25A', light: '#E2D07A', dark: '#8E7A34', ring: '#F0E4A0', ringDark: '#A08A46' },
+      flower: ['#E8FF9A', '#A8E888', '#FFFFFF'],
+      weather: { type: 'rain', color: '#B8F0C8', rate: 0.55 },
+      decor: { tuft: 1.1, flower: 0.25, pebble: 0.2, mushroom: 0.3, bush: 0.6, cactus: 0, lily: 0.5, shell: 0, bamboo: 1.2 },
+      water: { base: '#3F8E6A', light: '#5FB98A', dark: '#2C6448' },
+      fog: 'rgba(80, 160, 100, 0.07)',
+      dark: false
+    },
+
+    // -------------------------------------------------------
+    // 16. Ледяные пики — снег, лёд, ледяные шипы
+    // -------------------------------------------------------
+    {
+      id: 'frozen_peaks', ru: 'ЛЕДЯНЫЕ ПИКИ', en: 'FROZEN PEAKS', icon: '🏔️', tree: 'ice_spike',
+      accent: '#B6F0FF',
+      grass: { base: '#D7E7F2', light: '#EDF8FF', dark: '#BCD2E0', blade: '#FFFFFF' },
+      soil: { top: '#7C8A96', light: '#98A8B4', dark: '#56626C', speck: '#C0D0DC' },
+      leaf: { base: '#7CC8E8', light: '#C8F2FF', dark: '#4E9FC4', edge: '#2E6E92', accent: '#FFFFFF' },
+      log: { bark: '#5A6A78', light: '#788A98', dark: '#3A4854', ring: '#B8D8E8', ringDark: '#7C9AAE' },
+      flower: ['#FFFFFF', '#B6F0FF'],
+      weather: { type: 'snow', color: '#FFFFFF', rate: 0.8 },
+      decor: { tuft: 0.2, flower: 0.04, pebble: 0.5, mushroom: 0, bush: 0.1, cactus: 0, lily: 0, shell: 0, crystal: 0.8 },
+      fog: 'rgba(200, 240, 255, 0.09)',
+      snow: true, ice: true, dark: false
+    },
+
+    // -------------------------------------------------------
+    // 17. Багровый лес — красная чаща и тлеющие искры
+    // -------------------------------------------------------
+    {
+      id: 'crimson', ru: 'БАГРОВЫЙ ЛЕС', en: 'CRIMSON FOREST', icon: '🔥', tree: 'crimson',
+      accent: '#FF6B4A',
+      grass: { base: '#8A4A4A', light: '#A75D5A', dark: '#6E3838', blade: '#C97A6A' },
+      soil: { top: '#5A2C2C', light: '#753C38', dark: '#3A1A1A', speck: '#9A5048' },
+      leaf: { base: '#B33A3A', light: '#D85C4A', dark: '#7A2626', edge: '#4A1010', accent: '#FF9F43' },
+      log: { bark: '#4A2424', light: '#643232', dark: '#2E1212', ring: '#9A5A4A', ringDark: '#5E2E2E' },
+      flower: ['#FF9F43', '#FF5A3A', '#FFD84D'],
+      weather: { type: 'ash', color: '#FF8A5A', rate: 0.55 },
+      decor: { tuft: 0.35, flower: 0.1, pebble: 0.6, mushroom: 0.25, bush: 0.35, cactus: 0.1, lily: 0, shell: 0, crystal: 0.3 },
+      fog: 'rgba(120, 20, 20, 0.10)',
+      ash: true, dark: true
+    },
+
+    // -------------------------------------------------------
+    // 18. Искажённый лес — бирюзовая чаща и свечение
+    // -------------------------------------------------------
+    {
+      id: 'warped', ru: 'ИСКАЖЁННЫЙ ЛЕС', en: 'WARPED FOREST', icon: '🌀', tree: 'warped',
+      accent: '#4FE0D0',
+      grass: { base: '#3E7A7A', light: '#4F9490', dark: '#2F5E5E', blade: '#6FC8C0' },
+      soil: { top: '#2E4A4A', light: '#3C6260', dark: '#1E3434', speck: '#5A8A86' },
+      leaf: { base: '#2E9C9C', light: '#5CC8C0', dark: '#1E6E6E', edge: '#0E3A3A', accent: '#8A7CFF' },
+      log: { bark: '#244A4A', light: '#346A68', dark: '#142E2E', ring: '#78A8A0', ringDark: '#346A68' },
+      flower: ['#8A7CFF', '#4FE0D0', '#FFFFFF'],
+      weather: { type: 'spark', color: '#8AF8F0', rate: 0.5 },
+      decor: { tuft: 0.5, flower: 0.2, pebble: 0.4, mushroom: 0.4, bush: 0.4, cactus: 0, lily: 0.2, shell: 0, crystal: 0.6 },
+      fog: 'rgba(20, 90, 90, 0.10)',
+      void: true, dark: true
+    },
+
+    // -------------------------------------------------------
+    // 19. Эндовые острова — бледный камень, хорусы, фиолетовое свечение
+    // -------------------------------------------------------
+    {
+      id: 'end', ru: 'ЭНДОВЫЕ ОСТРОВА', en: 'END ISLANDS', icon: '🌌', tree: 'chorus',
+      accent: '#B98CFF',
+      grass: { base: '#CBBFD8', light: '#DED4E8', dark: '#B2A4C4', blade: '#E8DBF2' },
+      soil: { top: '#8A7A9A', light: '#A592B4', dark: '#6A5A7A', speck: '#C0B0D0' },
+      leaf: { base: '#8A5AB0', light: '#B47AD8', dark: '#5E3A7A', edge: '#3A1E52', accent: '#E8C8FF' },
+      log: { bark: '#6B5A7A', light: '#89739A', dark: '#4A3C5A', ring: '#C9B0E0', ringDark: '#7A6690' },
+      flower: ['#E8C8FF', '#B98CFF', '#8A7CFF'],
+      weather: { type: 'spark', color: '#D8C0FF', rate: 0.5 },
+      decor: { tuft: 0.2, flower: 0.1, pebble: 0.35, mushroom: 0.2, bush: 0.2, cactus: 0, lily: 0, shell: 0, crystal: 1.1 },
+      fog: 'rgba(90, 50, 130, 0.09)',
+      void: true, dark: true
+    },
+
+    // -------------------------------------------------------
+    // 20. Каменистый берег — галька, вода, сухие деревья
+    // -------------------------------------------------------
+    {
+      id: 'stony_shore', ru: 'КАМЕНИСТЫЙ БЕРЕГ', en: 'STONY SHORE', icon: '🪨', tree: 'dead',
+      accent: '#B8C8D0',
+      grass: { base: '#9AA0A0', light: '#B0B6B6', dark: '#7F8686', blade: '#D0D8D8' },
+      soil: { top: '#6F7575', light: '#8A9292', dark: '#4E5454', speck: '#A8B0B0' },
+      leaf: { base: '#4F7A5A', light: '#6E9A78', dark: '#345A3E', edge: '#1E3A26', accent: '#C8D8C0' },
+      log: { bark: '#5A5248', light: '#766A5C', dark: '#3A342C', ring: '#A0907A', ringDark: '#6E6252' },
+      flower: ['#C8D8C0', '#FFFFFF', '#FFD84D'],
+      weather: { type: 'rain', color: '#C0D8E0', rate: 0.35 },
+      decor: { tuft: 0.45, flower: 0.1, pebble: 1.2, mushroom: 0.05, bush: 0.25, cactus: 0, lily: 0, shell: 0.5 },
+      water: { base: '#4A7A9A', light: '#6AA0C0', dark: '#2E5470' },
+      fog: 'rgba(150, 170, 180, 0.06)',
+      stony: true, dark: false
+    },
+
+    // -------------------------------------------------------
+    // 21. Цветущий луг — много цветов и берёз
+    // -------------------------------------------------------
+    {
+      id: 'meadow', ru: 'ЦВЕТУЩИЙ ЛУГ', en: 'FLOWER MEADOW', icon: '🌼', tree: 'birch',
+      accent: '#FFE066',
+      grass: { base: '#79C455', light: '#8FD86A', dark: '#63A944', blade: '#D8F0A0' },
+      soil: { top: '#8A6040', light: '#A57A52', dark: '#5E4028', speck: '#C9A078' },
+      leaf: { base: '#69B33C', light: '#8BD455', dark: '#4C8C2A', edge: '#356A1D', accent: '#FFE066' },
+      log: { bark: '#E6E3D4', light: '#F7F5EA', dark: '#A9A794', ring: '#D6CFB2', ringDark: '#9B957C' },
+      flower: ['#FFD84D', '#FF6B9D', '#FFFFFF', '#B98CFF', '#FF8A3D'],
+      weather: { type: 'pollen', color: '#FFF3B0', rate: 0.38 },
+      decor: { tuft: 1.2, flower: 2.0, pebble: 0.2, mushroom: 0.2, bush: 0.3, cactus: 0, lily: 0, shell: 0 },
+      fog: 'rgba(255, 240, 180, 0.04)',
+      dark: false
     }
   ];
 
