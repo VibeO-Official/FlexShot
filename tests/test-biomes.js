@@ -1,6 +1,7 @@
 /* Биомы и процедурная графика: node tests/test-biomes.js */
 const Biomes = require('../js/biomes.js');
 const Gen = require('../js/generator.js');
+const Skins = require('../js/skins.js');
 
 let fails = 0;
 function check(name, cond, extra) {
@@ -14,8 +15,9 @@ const GRASS = ['base', 'light', 'dark', 'blade'];
 const SOIL = ['top', 'light', 'dark', 'speck'];
 const LEAF = ['base', 'light', 'dark', 'edge'];
 const LOG = ['bark', 'light', 'dark', 'ring', 'ringDark'];
-const SPECIES = ['oak', 'birch', 'spruce', 'dark_oak', 'jungle', 'acacia', 'cactus', 'palm', 'dead'];
-const WEATHER = ['snow', 'rain', 'leaf', 'spore', 'dust', 'pollen'];
+const SPECIES = ['oak', 'birch', 'spruce', 'dark_oak', 'jungle', 'acacia', 'cactus', 'palm', 'dead',
+  'cherry', 'mushroom', 'bamboo', 'ice_spike', 'crimson', 'warped', 'chorus'];
+const WEATHER = ['snow', 'rain', 'leaf', 'spore', 'dust', 'pollen', 'petal', 'ash', 'spark'];
 
 let palettesOk = true;
 const uniqueIds = new Set();
@@ -151,6 +153,15 @@ try {
   }
 } catch (e) { sceneOk = false; sceneError = e.message; }
 check('арена, погода и стикмены рисуются во всех биомах', sceneOk, sceneError);
+
+let gearOk = true;
+let gearError = '';
+try {
+  const ctx = fakeCanvas().getContext('2d');
+  for (const w of Skins.weapons) Art.drawWeapon(ctx, 1.4, w.id, '#1A1F28', 0.6, w.accent);
+  for (const b of Skins.bullets) Art.drawBulletHead(ctx, 40, 40, b, 1.2, 7);
+} catch (e) { gearOk = false; gearError = e.message; }
+check('все скины пуль и оружия рисуются', gearOk, gearError);
 
 check('масштаб стикмена ограничен', Art.stickmanScale(0) >= 0.6 && Art.stickmanScale(100) <= 1.1);
 

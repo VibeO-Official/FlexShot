@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0B0D12">
-  <meta name="description" content="ONE BULLET / FlexShot — головоломка-экшен с одной пулей, рикошетами, биомами и бесконечными уровнями. Вся графика нарисована кодом.">
+  <meta name="description" content="ONE BULLET / FlexShot — головоломка-экшен с одной пулей, рикошетами, управлением пулей в полёте, 21 биомом, кейсом скинов и бесконечными уровнями. Вся графика нарисована кодом.">
   <title>ONE BULLET — FlexShot</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230B0D12%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%279%27 fill=%27%23fff%27/%3E%3Ccircle cx=%2732%27 cy=%2732%27 r=%2716%27 fill=%27none%27 stroke=%27%23FF6B35%27 stroke-width=%273%27/%3E%3C/svg%3E">
@@ -57,17 +57,17 @@
 
       <!-- ================= Экранные кнопки (мобильные) ================= -->
       <div id="touch" class="hidden">
-        <div class="touch-pad">
-          <button class="touch-btn" data-hold="left" aria-label="Повернуть влево">◀</button>
-          <button class="touch-btn" data-hold="right" aria-label="Повернуть вправо">▶</button>
+        <div id="stick" class="stick" aria-label="Управление пулей">
+          <div id="stickBase" class="stick-base">
+            <span class="stick-arrow up">▲</span>
+            <span class="stick-arrow down">▼</span>
+            <span class="stick-arrow left">◀</span>
+            <span class="stick-arrow right">▶</span>
+            <div id="stickKnob" class="stick-knob"></div>
+          </div>
+          <div id="stickLabel" class="stick-label" data-i18n="hud.steer">ВЕДИ ПУЛЮ</div>
         </div>
-        <div class="touch-pad">
-          <button class="touch-btn" data-hold="slow" aria-label="Замедлить">▼</button>
-          <button class="touch-btn" data-hold="fast" aria-label="Ускорить">▲</button>
-        </div>
-        <div class="touch-pad">
-          <button class="touch-btn touch-fire" id="btnFireTouch" aria-label="Выстрел">FIRE</button>
-        </div>
+        <button class="touch-btn touch-fire" id="btnFireTouch" aria-label="Выстрел">FIRE</button>
       </div>
 
       <div id="screens">
@@ -88,13 +88,17 @@
                 <button id="btnDaily" class="btn" data-i18n="menu.daily">ИСПЫТАНИЕ</button>
               </div>
               <div class="menu-row">
+                <button id="btnSkins" class="btn skins-btn" data-i18n="menu.skins">СКИНЫ</button>
                 <button id="btnRecords" class="btn ghost" data-i18n="menu.records">РЕКОРДЫ</button>
-                <button id="btnSettings" class="btn ghost" data-i18n="menu.settings">НАСТРОЙКИ</button>
               </div>
+              <button id="btnSettings" class="btn ghost" data-i18n="menu.settings">НАСТРОЙКИ</button>
             </div>
 
             <div class="menu-foot">
-              <div id="menuStats" class="menu-stats"></div>
+              <div class="menu-meta">
+                <div id="menuStats" class="menu-stats"></div>
+                <div id="menuCoins" class="menu-coins">🪙 160</div>
+              </div>
               <div class="menu-note" data-i18n="menu.note">Прогресс сохраняется в браузере</div>
             </div>
           </div>
@@ -129,6 +133,7 @@
             <div class="daily-card">
               <div class="daily-date" id="dailyDate">—</div>
               <div class="daily-level" id="dailyLevel">ARENA —</div>
+              <div class="daily-biome" id="dailyBiome">🌾 РАВНИНЫ</div>
               <div class="daily-timer">
                 <span data-i18n="daily.next">До нового испытания</span>
                 <strong id="dailyCountdown">00:00:00</strong>
@@ -151,6 +156,52 @@
             <div class="stats-grid" id="recordsStats"></div>
             <h3 data-i18n="records.achievements">ДОСТИЖЕНИЯ</h3>
             <div id="achievementsList" class="ach-list"></div>
+          </div>
+        </section>
+
+        <!-- Скины и кейс -->
+        <section id="screen-skins" class="screen">
+          <header class="screen-header">
+            <button class="icon-btn back" id="btnSkinsBack" aria-label="Назад">←</button>
+            <h2 data-i18n="skins.title">СКИНЫ</h2>
+            <div class="header-spacer"></div>
+            <div id="skinsCoins" class="hud-chip coins-chip">🪙 160</div>
+          </header>
+
+          <div class="skins-body">
+            <div class="case-panel">
+              <div class="case-visual" aria-hidden="true">
+                <div class="case-box">
+                  <span class="case-lid"></span>
+                  <span class="case-lock">✦</span>
+                  <span class="case-shine"></span>
+                </div>
+              </div>
+              <div class="case-info">
+                <h3 data-i18n="skins.case">КЕЙС СКИНОВ</h3>
+                <p class="muted small" data-i18n="skins.caseNote">Внутри — случайный скин пули или оружия. Повторы не выпадают.</p>
+                <button id="btnOpenCase" class="btn primary" data-i18n="skins.open">ОТКРЫТЬ КЕЙС · 100</button>
+                <p id="skinProgress" class="muted small"></p>
+              </div>
+            </div>
+
+            <div class="skin-tabs">
+              <button id="tabBullets" class="btn tiny primary" data-i18n="skins.bullets">ПУЛИ</button>
+              <button id="tabWeapons" class="btn tiny" data-i18n="skins.weapons">ОРУЖИЕ</button>
+            </div>
+
+            <div id="skinGrid" class="skin-grid"></div>
+            <p class="muted small center" data-i18n="skins.disclaimer">Скины меняют только внешний вид — физика и баланс уровней прежние.</p>
+          </div>
+
+          <div id="caseModal" class="case-modal hidden" role="dialog" aria-modal="true">
+            <div class="case-card">
+              <div id="caseRarity" class="case-rarity">РЕДКИЙ</div>
+              <canvas id="casePreview" width="720" height="400" aria-hidden="true"></canvas>
+              <h3 id="caseName">СКИН</h3>
+              <p id="caseSub" class="muted small"></p>
+              <button id="btnCaseTake" class="btn primary" data-i18n="skins.take">ЗАБРАТЬ</button>
+            </div>
           </div>
         </section>
 
@@ -182,7 +233,7 @@
               </div>
             </div>
             <button class="btn danger" id="btnReset" data-i18n="settings.reset">СБРОСИТЬ ПРОГРЕСС</button>
-            <p class="muted small" data-i18n="settings.resetNote">Сброс удалит открытые уровни, рекорды и достижения.</p>
+            <p class="muted small" data-i18n="settings.resetNote">Сброс удалит уровни, рекорды, достижения, монеты и скины.</p>
           </div>
         </section>
 
@@ -216,6 +267,8 @@
 
   <script src="js/engine.js"></script>
   <script src="js/biomes.js"></script>
+  <script src="js/enemies.js"></script>
+  <script src="js/skins.js"></script>
   <script src="js/generator.js"></script>
   <script src="js/art.js"></script>
   <script src="js/yandex.js"></script>

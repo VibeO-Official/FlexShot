@@ -46,6 +46,17 @@ step('PLAY', () => {
 
 step('отрисовка', () => H.tick(5));
 
+step('джойстик', () => {
+  const game = H.win.FlexShot.game;
+  H.dispatch('stickBase', 'pointerdown', { clientX: 900, clientY: 360, pointerId: 1 });
+  check('джойстик активен', game.stick.active === true);
+  check('джойстик наводит на цель', Math.abs(game.aim) < 0.05, game.aim);
+  H.dispatch('stickBase', 'pointerup', { pointerId: 1 });
+  check('джойстик отпущен', game.stick.active === false);
+  H.dispatch('game', 'pointermove', { clientX: 900, clientY: 360, pointerType: 'mouse' });
+  check('мышь запоминает курсор', game.mouse.movedAt > 0);
+});
+
 step('FIRE', () => {
   el('btnFire').click();
   H.tick(60);
@@ -82,6 +93,27 @@ step('рекорды', () => {
   el('btnRecords').click();
   check('статистика', !!el('recordsStats').innerHTML);
   check('достижения', el('achievementsList').innerHTML.indexOf('ach-item') !== -1);
+});
+
+step('скины и кейс', () => {
+  el('btnSkins').click();
+  check('экран скинов', el('screen-skins').classList.contains('active'));
+  check('карточки скинов', el('skinGrid').innerHTML.indexOf('skin-card') !== -1);
+  check('монеты в меню', el('menuCoins').textContent.indexOf('🪙') !== -1, el('menuCoins').textContent);
+  const save = H.win.FlexShot.getSave();
+  const coinsBefore = save.coins;
+  const ownedBefore = Object.keys(save.ownedBullets).length + Object.keys(save.ownedWeapons).length;
+  el('btnOpenCase').click();
+  check('кейс открылся', !el('caseModal').classList.contains('hidden'));
+  check('монеты списались', H.win.FlexShot.getSave().coins < coinsBefore);
+  const ownedAfter = Object.keys(save.ownedBullets).length + Object.keys(save.ownedWeapons).length;
+  check('новый скин получен', ownedAfter === ownedBefore + 1, ownedBefore + ' -> ' + ownedAfter);
+  el('btnCaseTake').click();
+  check('кейс закрылся', el('caseModal').classList.contains('hidden'));
+  H.win.FlexShot.skins.equip('bullet', 'ember');
+  check('скин пули надет', H.win.FlexShot.getSave().bulletSkin === 'ember');
+  el('btnSkinsBack').click();
+  check('возврат в меню', el('screen-menu').classList.contains('active'));
 });
 
 step('испытание', () => {

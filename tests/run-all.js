@@ -6,6 +6,7 @@ const tests = [
   'test-generator.js',
   'test-content.js',
   'test-biomes.js',
+  'test-skins.js',
   'test-gameplay.js',
   'test-progression.js',
   'test-save.js',
